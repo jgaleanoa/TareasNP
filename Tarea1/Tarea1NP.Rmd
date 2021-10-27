@@ -51,6 +51,44 @@ es $\mathbb{P}(\text{éxito}) \leq 0.3$ y la hipótesis alterna es
 $\mathbb{P}(\text{éxito}) > 0.3$ donde 3 éxitos son observados en 25 ensayos
 independientes.
 
+\textbf{Solución}
+
+Sea $X: \text{Número de éxitos en 25 ensayos}$, luego $X \sim b(n = 25, \ p)$. La hipótesis a probar es
+
+$$
+\begin{cases}
+H_0: p \leq 0.3 \\
+H_1: p > 0.3
+\end{cases}
+$$
+
+como se tienen 3 éxitos en 25 ensayos independientes, el estadístico de prueba es 
+$T = 3$ éxitos. 
+
+\subsection{Valor-p}
+
+Bajo la hipótesis nula, se toma $p = 0.3$ por lo que 
+$X \sim b(n = 25, \ p = 0.3)$; al tratarse de una prueba de cola derecha el valor-p 
+usando la distribución exacta se calcula como 
+$\mathbb{P}(X \geq T_{obs}) = \mathbb{P}(X \geq 3) = `r pbinom(2, 25, 0.3, lower.tail = F) %>% round(4)` >> 0.1$ 
+por lo que no se rechaza $H_0$, es decir, no existe evidencia muestral 
+significativa que sugiera $p > 0.3$; se puede asumir $p \leq 0.3$.
+
+\subsection{Región crítica}
+
+Se parte de la misma idea usada al probar la hipótesis usando el valor-p. 
+Bajo $H_0, \ X \sim b(n = 25, \ p = 0.3)$. En este caso se fija una región crítica a un
+nivel de significancia usual de $\alpha = 0.05$. El objetivo es encontrar $t$ tal que 
+$\mathbb{P}(X > t) \leq 0.05 = \alpha$
+
+```{r RR_EJ1, echo=F}
+t_ej1 <- qbinom(0.05, 25, 0.3, lower.tail = F)
+```
+
+Se puede verificar que $\mathbb{P}(X > 10) = `r pbinom(10, 25, 0.3, lower.tail = F) %>% round(4)` > 0.05$ mientras que 
+$\mathbb{P}(X > 11) = `r pbinom(11, 25, 0.3, lower.tail = F) %>% round(4)` < 0.05$,
+por lo tanto se toma $t = 11$. Como se está en un prueba de dos colas la región críticia se define como $R_c = \lbrace T|T > t \rbrace$, en este caso se tiene $T = 3 \ngtr 11$, es decir, $T$ no cae en la región crítica por lo que a un nivel de significancia de aproximadamente el 0.0442 < 0.05 no hay evidencia para rechazar $H_0$ y se llega a la misma conclusión que se obtuvo haciendo uso del valor-p.
+
 <!--- Daniel 
 A random sample of tenth-grade boys resulted in the following 20 observed weights. 
 Test the hyphotesis that the median weight is 103
