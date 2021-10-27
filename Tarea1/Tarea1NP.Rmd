@@ -36,8 +36,85 @@ library(tidyverse)
 \setcounter{page}{3}
 
 
-<!--- Distribución de ejercicios --> 
+<!--- Distribución de ejercicios -->
 
 
+<!--- Juanjo 
+Use the binomial formula to find the exact p-value (critical level) when the null
+hyphotesis is P(succes) $\leq 0.3$ and the alternative hyphotesis is P(success) 
+$> 0.3$, and 3 successes are observed in 25 independent trials.
+-->
+
+\section{Ejercicio 3.1.9)} Utilice la formula de la distribución binomial para encontrar 
+el valor-p exacto (nivel crítico) en el que la hipótesis nula 
+es $\mathbb{P}(\text{éxito}) \leq 0.3$ y la hipótesis alterna es 
+$\mathbb{P}(\text{éxito}) > 0.3$ donde 3 éxitos son observados en 25 ensayos
+independientes.
+
+<!--- Daniel 
+A random sample of tenth-grade boys resulted in the following 20 observed weights. 
+Test the hyphotesis that the median weight is 103
+-->
+
+\section{Ejercicio 3.2.1)} Una muestra aleatoria de chicos de décimo grado termina 
+en los siguientes 20 pesos observados.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+142 & 134 & 98  & 119 & 131 \\ \hline
+103 & 154 & 122 & 93  & 137 \\ \hline
+86  & 119 & 161 & 144 & 158 \\ \hline
+165 & 81  & 117 & 128 & 103 \\ \hline
+\end{tabular}
+\end{table}
+ 
+Pruebe la hipótesis que la mediana de peso es 103.
+
+<!--- Juanjo 
+Six students went on a diet in an attempt to lose weight, with the following results. 
+Is the diet an effective means of losing weight?
+-->
+
+\section{Ejercicio 3.4.1)} Seis estudiantes se ponen a dieta para intentar perder peso, 
+se tienen los siguientes resultados.
+
+```{r tabla_341, echo=FALSE}
+before <- c(174, 191, 188, 182, 201, 188)
+after <- c(165, 186, 183, 178, 203, 181)
+tabla_341 <- rbind(before, after) 
+colnames(tabla_341) <- c("Abdul", "Ed", "Jim", "Max", "Phil", "Ray")
+rownames(tabla_341) <- c("Peso antes", "Peso después")
+kable(as.data.frame(tabla_341), longtable = T, 
+      caption = "Datos de los estudiantes antes y después de la dieta")
+```
+
+¿Es la dieta efectiva para perder peso?
+
+<!--- Daniel 
+In exercise 1, suppose all 37 of the persons opposed to the foreign policy after the
+experiment were also among those opposed to the U.S foreign policy
+before the experiment. Is the change in the number of people opposed to the U.S foreign
+policy significant? 
+-->
+
+\section{Ejercicio 3.5.2)} En el ejercicio 1, suponga que las 37 personas que se 
+opusieron a la política extranjera después del experimento también se encontraban 
+entre las que se oponían a la política antes del experimento. ¿Es el cambio en el 
+número de personas que se oponen a la política extranjera de Estados Unidos 
+significativa?
+
+```{r opinion_352, echo=F}
+opinion <- matrix(c(43, 92,
+                    37, 98), byrow = T, ncol = 2)
+colnames(opinion) <- c("En contra", "A favor")
+rownames(opinion) <- c("Antes", "Despues")
+kable(as.data.frame(opinion), longtable = T, caption = "Información del ejercicio 3.5.1")
+```
+
+\textbf{Nota:} En el ejercicio 1 se da como información que después del boletín 
+informativo respecto a la política extranjera, 30 de las 37 personas que se oponen
+fueron personas que originalmente no se opusieron a la política.
 
 
