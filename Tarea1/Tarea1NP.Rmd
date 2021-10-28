@@ -81,13 +81,17 @@ Bajo $H_0, \ X \sim b(n = 25, \ p = 0.3)$. En este caso se fija una región crí
 nivel de significancia usual de $\alpha = 0.05$. El objetivo es encontrar $t$ tal que 
 $\mathbb{P}(X > t) \leq 0.05 = \alpha$
 
-```{r RR_EJ1, echo=F}
-t_ej1 <- qbinom(0.05, 25, 0.3, lower.tail = F)
+```{r RR_EJ1, echo=F, eval=F}
+qbinom(0.05, 25, 0.3, lower.tail = F)
 ```
 
 Se puede verificar que $\mathbb{P}(X > 10) = `r pbinom(10, 25, 0.3, lower.tail = F) %>% round(4)` > 0.05$ mientras que 
 $\mathbb{P}(X > 11) = `r pbinom(11, 25, 0.3, lower.tail = F) %>% round(4)` < 0.05$,
-por lo tanto se toma $t = 11$. Como se está en un prueba de dos colas la región críticia se define como $R_c = \lbrace T|T > t \rbrace$, en este caso se tiene $T = 3 \ngtr 11$, es decir, $T$ no cae en la región crítica por lo que a un nivel de significancia de aproximadamente el 0.0442 < 0.05 no hay evidencia para rechazar $H_0$ y se llega a la misma conclusión que se obtuvo haciendo uso del valor-p.
+por lo tanto se toma $t = 11$. Como se está en un prueba de dos colas la región críticia 
+se define como $R_c = \lbrace T|T > t \rbrace$, en este caso se tiene $T = 3 \ngtr 11$, 
+es decir, $T$ no cae en la región crítica por lo que a un nivel de significancia de
+aproximadamente el 0.0442 < 0.05 no hay evidencia para rechazar $H_0$ y se llega 
+a la misma conclusión que se obtuvo haciendo uso del valor-p.
 
 <!--- Daniel 
 A random sample of tenth-grade boys resulted in the following 20 observed weights. 
@@ -129,6 +133,50 @@ kable(as.data.frame(tabla_341), longtable = T,
 ```
 
 ¿Es la dieta efectiva para perder peso?
+
+\textbf{Solución}
+
+Se definen las variables aleatorias
+
+$$
+\begin{aligned}
+X_i&: \text{Peso del i-ésimo estudiante antes de la dieta} \\
+Y_i&: \text{Peso del i-ésimo estudiante después de la dieta}
+\end{aligned}
+$$
+Como se quiere saber si la dieta es efectiva para perder peso, se utiliza  el test del signo y se plantea el juego de hipótesis.
+
+$$
+\begin{cases}
+H_0: \mathbb{E}(X_i) \leq \mathbb{E}(Y_i) \hspace{.1in} \forall_i \\
+H_1: \mathbb{E}(X_i) > \mathbb{E}(Y_i)  \hspace{.1in} \exists_i
+\end{cases}
+$$
+por la naturaleza del problema.
+
+```{r estadistico, echo=F}
+T_stat <- sum(tabla_341[1, ] < tabla_341[2, ])
+```
+
+
+Note que se tiene un test de cola izquierda, además $n' = 6$ y el estadístico de 
+prueba es $T = `r T_stat`$ porque solo hay un estudiante que no perdió peso después de 
+seguir la dieta (Phil). Por otro lado no hay empates, lo cual implica que $n = 6 = n'$.
+
+Especificada toda esta información, se usa la variable aleatoria 
+$\mathcal{Y} \sim b(6, \ 0.5)$ luego se calcula el valor-p como 
+$\mathbb{P}(\mathcal{Y} \leq \ 1) = `r pbinom(1, 6, 0.5) %>% round(4)`$ lo cual 
+no es suficiente para rechazar la hipótesis nula a un nivel de significancia usual
+de 0.05, es decir, no existe evidencia muestral suficiente para pensar que la dieta 
+sea efectiva para perder peso.
+
+Se advierte que al comparar una hipótesis universal vs una existencial, la prueba se 
+vuelve muy sensible al hecho de que una sola observación de la muestra falle, por 
+otro lado la cantidad de estudiantes testeados es muy baja por lo que se recomienda
+(de ser posible) someter a una mayor cantidad de estos a la dieta para obtener 
+resultados más contundentes (esto porque si se hubiera tomado $\alpha = 0.1$ como 
+nivel de significancia, tomar una decisión sería complicado dado que el valor-p se
+encuentra en todo el límite de decisión).
 
 <!--- Daniel 
 In exercise 1, suppose all 37 of the persons opposed to the foreign policy after the
