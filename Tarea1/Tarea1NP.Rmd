@@ -114,6 +114,67 @@ en los siguientes 20 pesos observados.
  
 Pruebe la hipótesis que la mediana de peso es 103.
 
+\textbf{Solución}
+
+Sea $X:$ El peso de los estudiantes de grado $10$. La hipótesis que se quiere probar
+es:
+
+$$
+\begin{cases}
+H_0: P(X\leq x^*)\geq p^* \wedge P(X< x^*)\leq p^* \\
+H_1: x^* \text{ no es el }p^*\text{-esimo cuantil poblacional}
+\end{cases}
+$$
+Bajo la hipótesis nula se toma $x^*=103$ y $p^*=0.5$, tal que $X \sim Bin(n=20,p^=0.5)$.
+Para probar la hipótesis anterior se toma $\alpha=0.05$, se toman como estadísticos de prueba $T_1$ el número
+de observaciones menores o iguales a $x^*$,$T_2$ el número
+de observaciones menores a $x^*$ y se crea una región critica $Rc$ tal que:
+
+$$
+Rc=\{(T_1,T_2)/T_1\leq t_1 \vee T_2>t_2\}
+$$
+donde:
+
+$$
+\begin{cases}
+t_1: P(X\leq t_1)\leq 0.025 \\
+t_2: P(X>t_2)\leq 0.025
+\end{cases}
+$$
+```{r RR_EJ2, echo=F, eval=F}
+X <- c(142 , 134 , 98  , 119 , 131 ,103 , 154 , 122 , 93  , 137 ,86  , 119 , 161 , 144 , 158, 165 , 81  , 117 , 128 , 103)
+
+n <- length(X)
+x_star <- 103
+p_star <- 0.5
+alpha=0.05
+
+T1 <- sum(X<=x_star)
+T2 <- sum(X<x_star)
+
+
+t1 <- ifelse(pbinom(q=qbinom(alpha/2,size=n,prob = p_star),size=n,prob=p_star)>alpha/2,
+             qbinom(alpha/2,size=n,prob = p_star)-1,
+             qbinom(alpha/2,size=n,prob = p_star))
+
+t2 <- ifelse(pbinom(q=qbinom(1-alpha/2,size=n,prob = p_star),size=n,prob=p_star)>1-alpha/2,
+             qbinom(1-alpha/2,size=n,prob = p_star)-1,
+             qbinom(1-alpha/2,size=n,prob = p_star)) 
+  
+#library(snpar)
+#quant.test(X,q=x_star,p=p_star,alternative = "two.sided",exact=T)
+```
+
+Con los datos de los estudiantes de grado 10 se encuentra que $t_1=5$ y $t_2=13$, así la región critica queda como:
+
+$$
+Rc=\{(T_1,T_2)/T_1\leq 5 \vee T_2>13\}
+$$
+
+Luego los estadísticos calculados son: $T_1=6$ Y $T_2=4$
+
+Como ni $T_1$ ni $T_2$  caen en la región critica no se rechaza $H_0$, por lo tanto no hay evidencia muestral suficiente para sugerir que la mediana de los estudiantes de grado 10 no sea 103.
+
 <!--- Juanjo 
 Six students went on a diet in an attempt to lose weight, with the following results. 
 Is the diet an effective means of losing weight?
