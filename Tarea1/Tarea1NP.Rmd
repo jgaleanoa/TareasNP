@@ -264,4 +264,34 @@ kable(as.data.frame(opinion), longtable = T, caption = "Información del ejercic
 informativo respecto a la política extranjera, 30 de las 37 personas que se oponen
 fueron personas que originalmente no se opusieron a la política.
 
+\textbf{Solución}
 
+Dados los datos de problema se construye la siguiente tabla:
+
+```{r echo=F}
+opinion <- matrix(c(37, 6,
+                    0, 92), byrow = T, ncol = 2)
+colnames(opinion)<-rownames(opinion)<- c("En contra", "A favor")
+kable(as.data.frame(opinion), longtable = T, caption = "Información del ejercicio 3.5.2")
+```
+
+La hipótesis a probar es:
+
+$$
+\begin{cases}
+H_0: \text{El número de personas que se oponen no altera sú descición despues del boletin informativo } \\
+H_1: \text{Despues del boletin informativo hay un mayor cambio de las personan que se oponen}
+\end{cases}
+$$
+Bajo $H_0$ y con un nivel de significancia $\alpha=0.05$ se utiliza el estadistico de prueba $T_2=b=6$ y se crea la región critica tal que:
+
+$$
+Rc=\{T_2/T_2\leq t \text{ ó } T_2\geq n-t\} \text{, donde }P(Y\leq t)\leq 0.025,Y\sim Bin(n,0.5)
+$$
+Dado que $n=b+c=b=6$ se obtiene un valor de $t=0$,la región critica queda tal que:
+
+$$
+Rc=\{T_2/T_2\leq 0 \text{ ó } T_2\geq 6\}
+$$
+
+Como $T_{2obs}$ cae en $Rc$ se rechaza $H_0$, es decir, hay evidencia muestral para sugerir que despues del boletin informativo hay un mayor cambio de las personas que se oponen.
