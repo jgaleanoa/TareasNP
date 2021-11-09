@@ -87,17 +87,18 @@ qbinom(0.05, 25, 0.3, lower.tail = F)
 
 Se puede verificar que $\mathbb{P}(X > 10) = `r pbinom(10, 25, 0.3, lower.tail = F) %>% round(4)` > 0.05$ mientras que 
 $\mathbb{P}(X > 11) = `r pbinom(11, 25, 0.3, lower.tail = F) %>% round(4)` < 0.05$,
-por lo tanto se toma $t = 11$. Como se está en un prueba de dos colas la región críticia 
-se define como $R_c = \lbrace T|T > t \rbrace$, en este caso se tiene $T = 3 \ngtr 11$, 
-es decir, $T$ no cae en la región crítica por lo que a un nivel de significancia de
-aproximadamente el 0.0442 < 0.05 no hay evidencia para rechazar $H_0$ y se llega 
-a la misma conclusión que se obtuvo haciendo uso del valor-p.
+por lo tanto se toma $t = 11$. Como se está en una prueba de cola derecha la región
+críticia se define como $R_c = \lbrace T|T > t \rbrace$, en este caso se tiene 
+$T = 3 \ngtr 11$, es decir, $T$ no cae en la región crítica por lo que a un nivel de
+significancia de aproximadamente el 0.0442 < 0.05 no hay evidencia para rechazar 
+$H_0$ y se llega a la misma conclusión que se obtuvo haciendo uso del valor-p.
 
 <!--- Daniel 
 A random sample of tenth-grade boys resulted in the following 20 observed weights. 
 Test the hyphotesis that the median weight is 103
 -->
 
+\newpage
 \section{Ejercicio 3.2.1)} Una muestra aleatoria de chicos de décimo grado termina 
 en los siguientes 20 pesos observados.
 
@@ -125,10 +126,13 @@ H_0: P(X\leq x^*)\geq p^* \wedge P(X< x^*)\leq p^* \\
 H_1: x^* \text{ no es el }p^*\text{-esimo cuantil poblacional}
 \end{cases}
 $$
-Bajo la hipótesis nula se toma $x^*=103$ y $p^*=0.5$, tal que $X \sim Bin(n=20,p^=0.5)$.
-Para probar la hipótesis anterior se toma $\alpha=0.05$, se toman como estadísticos de prueba $T_1$ el número
-de observaciones menores o iguales a $x^*$,$T_2$ el número
-de observaciones menores a $x^*$ y se crea una región critica $Rc$ tal que:
+Bajo la hipótesis nula se toma $x^*=103$ y $p^*=0.5$, tal que $X \sim Bin(n=20,p^* = 0.5)$.
+Para probar la hipótesis anterior se toma $\alpha=0.05$, se toman como estadísticos de prueba 
+
+* $T_1:$ el número de observaciones menores o iguales a $x^*$
+* $T_2:$ el número de observaciones menores a $x^*$ 
+
+y se crea una región crítica $Rc$ tal que:
 
 $$
 Rc=\{(T_1,T_2)/T_1\leq t_1 \vee T_2>t_2\}
@@ -158,28 +162,32 @@ t1 <- ifelse(pbinom(q=qbinom(alpha/2,size=n,prob = p_star),size=n,prob=p_star)>a
              qbinom(alpha/2,size=n,prob = p_star))
 
 t2 <- ifelse(pbinom(q=qbinom(1-alpha/2,size=n,prob = p_star),size=n,prob=p_star)>1-alpha/2,
-             qbinom(1-alpha/2,size=n,prob = p_star)-1,
+             qbinom(1-alpha/2,size=n,prob = p_star),
              qbinom(1-alpha/2,size=n,prob = p_star)) 
   
 #library(snpar)
 #quant.test(X,q=x_star,p=p_star,alternative = "two.sided",exact=T)
 ```
 
-Con los datos de los estudiantes de grado 10 se encuentra que $t_1=5$ y $t_2=13$, así la región critica queda como:
+Con los datos de los estudiantes de grado 10 se encuentra que $t_1=5$ y $t_2=14$, así la región critica queda como:
 
 $$
-Rc=\{(T_1,T_2)/T_1\leq 5 \vee T_2>13\}
+Rc=\{(T_1,T_2)/T_1\leq 5 \vee T_2>14\}
 $$
 
 Luego los estadísticos calculados son: $T_1=6$ Y $T_2=4$
 
-Como ni $T_1$ ni $T_2$  caen en la región critica no se rechaza $H_0$, por lo tanto no hay evidencia muestral suficiente para sugerir que la mediana de los estudiantes de grado 10 no sea 103.
+Como ni $T_1$ ni $T_2$  caen en la región crítica no se rechaza $H_0$, por lo tanto no hay evidencia muestral suficiente para sugerir que la mediana de los estudiantes de grado 10 no sea 103.
+
+Por último, se hace claridad que el nivel de significancia de esta prueba es 
+$\alpha \approx 0.0414$
 
 <!--- Juanjo 
 Six students went on a diet in an attempt to lose weight, with the following results. 
 Is the diet an effective means of losing weight?
 -->
 
+\newpage
 \section{Ejercicio 3.4.1)} Seis estudiantes se ponen a dieta para intentar perder peso, 
 se tienen los siguientes resultados.
 
@@ -229,7 +237,8 @@ $\mathcal{Y} \sim b(6, \ 0.5)$ luego se calcula el valor-p como
 $\mathbb{P}(\mathcal{Y} \leq \ 1) = `r pbinom(1, 6, 0.5) %>% round(4)`$ lo cual 
 no es suficiente para rechazar la hipótesis nula a un nivel de significancia usual
 de 0.05, es decir, no existe evidencia muestral suficiente para pensar que la dieta 
-sea efectiva para perder peso.
+sea efectiva para perder peso. Se puede comprobar que el nivel de de significancia 
+real es de aproximadamente 0.0156
 
 Se advierte que al comparar una hipótesis universal vs una existencial, la prueba se 
 vuelve muy sensible al hecho de que una sola observación de la muestra falle, por 
@@ -246,6 +255,7 @@ before the experiment. Is the change in the number of people opposed to the U.S 
 policy significant? 
 -->
 
+\newpage
 \section{Ejercicio 3.5.2)} En el ejercicio 1, suponga que las 37 personas que se 
 opusieron a la política extranjera después del experimento también se encontraban 
 entre las que se oponían a la política antes del experimento. ¿Es el cambio en el 
@@ -253,10 +263,10 @@ número de personas que se oponen a la política extranjera de Estados Unidos
 significativa?
 
 ```{r opinion_352, echo=F}
-opinion <- matrix(c(43, 92,
-                    37, 98), byrow = T, ncol = 2)
+opinion <- matrix(c(7, 36,
+                    30, 62), byrow = T, ncol = 2)
 colnames(opinion) <- c("En contra", "A favor")
-rownames(opinion) <- c("Antes", "Despues")
+rownames(opinion) <- c("En contra", "A favor")
 kable(as.data.frame(opinion), longtable = T, caption = "Información del ejercicio 3.5.1")
 ```
 
@@ -265,6 +275,14 @@ informativo respecto a la política extranjera, 30 de las 37 personas que se opo
 fueron personas que originalmente no se opusieron a la política.
 
 \textbf{Solución}
+
+Se definen las variables aleatorias:
+
+* $X:$ Opinión antes del boletín
+* $Y:$ Opinión después del boletín
+
+Se aclara que en esta situación las filas y columnas representan las variables aleatorias
+$X$ e $Y$ respectivamente.
 
 Dados los datos de problema se construye la siguiente tabla:
 
@@ -294,4 +312,9 @@ $$
 Rc=\{T_2/T_2\leq 0 \text{ ó } T_2\geq 6\}
 $$
 
-Como $T_{2obs}$ cae en $Rc$ se rechaza $H_0$, es decir, hay evidencia muestral para sugerir que despues del boletin informativo hay un mayor cambio de las personas que se oponen.
+Como $T_{2obs}$ cae en $Rc$ se rechaza $H_0$, es decir, hay evidencia muestral para 
+sugerir que después del boletín informativo hay un mayor cambio de las personas que 
+se oponen.
+
+El nivel de significancia real de la prueba es $\alpha \approx 0.03125$
+
