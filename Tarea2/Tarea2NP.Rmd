@@ -135,20 +135,61 @@ más potente que la otra y la cantidad de datos es límitada.
 Un equipo de observadores se mueve a través de un área boscosa e informa todos 
 los avistamientos, falsos y verdaderos, de equipo camuflado. Se utilizan dos 
 tipos de camuflaje, liso y estampado. El informe del equipo incluye el tipo 
-de camuflaje utilizado y la ubicación del equipoamiento. El equipo está siendo
+de camuflaje utilizado y la ubicación del equipamiento. El equipo está siendo
 monitoreado por una persona que sabe qué avistamientos son verdaderos y cuáles
 son falsos. Los resultados de avistamientos verdaderos y falsos son los siguientes.
 
 ```{r camuflajes}
 Estampado <- c(14, 27); Liso <- c(4, 32)
 Camuflaje <- data.frame(Estampado = Estampado, Liso = Liso)
-rownames(Camuflaje) <- c("Falsas detecciones", "Verdaderas detecciones")
+rownames(Camuflaje) <- c("Detecciones falsas", "Detecciones verdaderas")
 kable(Camuflaje, longtable = T, booktabs = T, caption = "Tipos de camuflaje")
 ```
+
 ¿Existe una diferencia significativa en la probabilidad de que un avistamiento
 informado sea incorrecto? (Tenga en cuenta que este estudio no se ocupa de 
 equipos no detectados ni de avistamientos que identifiquen erróneamente el 
 tipo de camuflaje) ¿Qué tipo de tabla de contingencia es esta?
+
+\begin{center}
+\textbf{Solución}
+\end{center}
+
+Dado que la persona que está monitoreando la operación conoce el número exacto 
+de observaciones verdaderas y falsas, los totales marginales para los tipos de
+camuflaje son fijos porque si conoce cuales son falsos y cuales son verdaderos, 
+debe saber el número total de equipos de camuflaje, por lo que se reescribe la 
+tabla de la siguiente manera:
+
+```{r tabla2}
+camuflaje2 <- data.frame(Falsas = c(14, 4, 18),
+                         Verdaderas = c(27, 32, 59),
+                         Total = c(41, 36, 77))
+rownames(camuflaje2) <- c("Estampado", "Liso", "Total")
+kable(camuflaje2, longtable = T, booktabs = T, 
+      caption = "Reescritura de la información", 
+      col.names = c("Detecciones falsas", "Detecciones verdaderas",
+                    "Total"))
+```
+
+Se plantea el siguiente conjunto de hipótesis 
+
+$$
+\begin{cases}
+H_0: P_1 = P_2 \\
+H_1: P_1 \neq P_2
+\end{cases}
+$$
+Para probar si existe diferencia entre la probabilidad de que un avistamiento sea
+informado incorrecto se usa la prueba $\chi^2$ para diferencias de probabilidades.
+
+$$
+\begin{aligned}
+T = T_1^2 &= \frac{77\left(14 \times 32 -27 \times 4\right)^2}{41 \times 36 \times 18 \times 59} = 5.6786 \\
+\text{Valor-P} &= \mathbb{P}(\chi_1^2 > 5.6786) = 0.0172
+\end{aligned}
+$$
+Como el Valo-p < 0.05 se rechaza $H_0$ y se concluye que existe diferencia en la probabilidad de que un avistamiento sea detectado como incorrecto. 
 
 \section{Ejercicio 4.4.2)} 
 
