@@ -1,0 +1,139 @@
+---
+header-includes:
+- \usepackage{longtable}
+- \usepackage[utf8]{inputenc}
+- \usepackage[spanish]{babel}\decimalpoint
+- \setlength{\parindent}{1.25cm}
+- \usepackage{amsmath}
+- \usepackage{xcolor}
+- \usepackage{cancel}
+- \usepackage{array}
+- \usepackage{float}
+- \usepackage{multirow}
+output:
+  pdf_document:
+    number_sections: true
+fontsize: 12pt
+papersize: letter
+geometry: margin = 1in
+language: "es"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F)
+library(kableExtra)
+library(knitr)
+library(tidyverse)
+```
+
+\input{PortadaNP}
+\thispagestyle{empty}
+\tableofcontents
+
+\newpage
+
+\pagestyle{myheadings}
+\setcounter{page}{3}
+
+\section{Ejercicio 4.1.6)}
+
+Use la prueba exacta de Fisher como un test para correlación positiva, como se 
+explicó en el ejercicio 5, para los datos en el ejemplo 3.5.4. Allí se administró 
+la reacción de un paciente al fármaco 1 ($X$) y la reacción del mismo paciente al
+fármaco 2 ($Y$) para 10 pacientes. (0.7, 1.9), (-1.6, 0.8), (-0.2, 1.1), 
+(-1.2, 0.1), (-0.1, -0.1), (3.4, 4.4), (3.7, 5.5), (0.8, 1.6), (0.0, 4.6), 
+(2.0, 3.4). Compare el valor-p usando la prueba exacta de Fisher con 0.0312, 
+el valor-p obtenido en la sección 3.5 usando los test de Cox y Stuart para 
+tendencia como un test de correlación.
+
+```{r DatosEJ1}
+x <- c(0.7, -1.6, -0.2, -1.2, -0.1, 3.4, 3.7, 0.8, 0, 2.0)
+y <- c(1.9, 0.8, 1.1, 0.1, -0.1, 4.4, 5.5, 1.6, 4.6, 3.4)
+datos1 <- data.frame(X = x, Y = y) %>% t()
+kable(datos1, longtable = T, booktabs = T, 
+      caption = "Reacción del paciente al fármaco")
+```
+
+
+\section{Ejercicio 4.2.6)}
+
+Un equipo de observadores se mueve a través de un área boscosa e informa todos 
+los avistamientos, falsos y verdaderos, de equipo camuflado. Se utilizan dos 
+tipos de camuflaje, liso y estampado. El informe del equipo incluye el tipo 
+de camuflaje utilizado y la ubicación del equipoamiento. El equipo está siendo
+monitoreado por una persona que sabe qué avistamientos son verdaderos y cuáles
+son falsos. Los resultados de avistamientos verdaderos y falsos son los siguientes.
+
+```{r camuflajes}
+Estampado <- c(14, 27); Liso <- c(4, 32)
+Camuflaje <- data.frame(Estampado = Estampado, Liso = Liso)
+rownames(Camuflaje) <- c("Falsas detecciones", "Verdaderas detecciones")
+kable(Camuflaje, longtable = T, booktabs = T, caption = "Tipos de camuflaje")
+```
+¿Existe una diferencia significativa en la probabilidad de que un avistamiento
+informado sea incorrecto? (Tenga en cuenta que este estudio no se ocupa de 
+equipos no detectados ni de avistamientos que identifiquen erróneamente el 
+tipo de camuflaje) ¿Qué tipo de tabla de contingencia es esta?
+
+\section{Ejercicio 4.4.2)} 
+
+Cincuenta trabajadores de fabrica se reportan en la enfermería por dolor debido 
+a la artritis. Veinticinco de ellos. A veinticinco de ellos se les administró 
+aspirina y al resto se les dio un placebo sin su conocimiento. Una hora después 
+se les preguntó si la pastilla que tomaron les ayudó a sentirse mejor. Diecisiete 
+en el grupo de aspirina y doce en el grupo de placebo dijeron que sí.
+
+**a)** Use $R_5$ para ver si existe una correlación positiva entre tomar 
+aspirina y sentirse mejor.
+
+**b)** Calcule $R_6$.
+
+**c)** Calcule $R_7$
+
+\section{Ejercicio 4.5.6)}
+
+Se obtuvieron veintiséis observaciones y surgió la pregunta de si siguen una
+distribución normal con media 12 y desviación estándar 3. Ninguna de las 
+observaciones estuvo por debajo del cuartil inferior de esta distribución y 
+12 por encima del cuartil superior. Seis estaban por debajo de la mediana y
+ocho entre la mediana y el cuartil superior. ¿Parece que estas observaciones 
+proceden de la distribución descrita?
+
+```{r DatosEJ4}
+datos4 <- data.frame(Probabilidad = c(0.25, 0.5, 0.75),
+                     Observacion = c(0, 14, 12)) %>% t()
+rownames(datos4) <- c( "Probabilidad", "Observación")
+kable(datos4, longtable = T, booktabs = T, 
+      caption = "Información suministrada")
+```
+
+
+\section{Ejercicio 4.6.3)}
+
+En un intento de comparar el poder relativo de tres pruebas estadísticas, 
+se generaron 100 conjuntos de datos artificiales utilizando una computadora.
+En cada uno de los datos se utilizaron las tres pruebas estadísticas, con
+$\alpha = 0.05$, y se registró la decisión de aceptar o rechazar $H_0$.
+Los resultados fueron los siguientes
+
+```{r potencia}
+test1 <- c(rep("Acepta", 3), rep("Rechaza", 3), "Acepta", "Rechaza")
+test2 <- c(rep("Acepta", 2), "Rechaza", "Acepta", "Rechaza", "Acepta", 
+           rep("Rechaza", 2))
+test3 <- c("Acepta", "Rechaza", rep("Acepta", 3), rep("Rechaza", 3))
+number_sets <- c(26, 6, 12, 4, 18, 5, 7, 22)
+potencia <- data.frame(Prueba1 = test1, Prueba2 = test2, Prueba3 = test3,
+                       conjuntos_prueba = number_sets)
+kable(potencia, longtable = T, booktabs = T, caption = "Potencia de las pruebas",
+      col.names = c("Prueba 1", "Prueba 2", "Prueba 3", 
+                    "Número de conjuntos de datos"))
+```
+
+¿Existe una diferencia en la potencia de las tres pruebas cuando se aplican a 
+las poblaciones de las que se obtuvieron los datos simulados?
+
+
+
+
+
+
