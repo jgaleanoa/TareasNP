@@ -20,10 +20,11 @@ language: "es"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = F)
+knitr::opts_chunk$set(echo = F, fig.pos = "center")
 library(kableExtra)
 library(knitr)
 library(tidyverse)
+library(gtools)
 ```
 
 \input{PortadaNP}
@@ -46,6 +47,17 @@ fármaco 2 ($Y$) para 10 pacientes. (0.7, 1.9), (-1.6, 0.8), (-0.2, 1.1),
 el valor-p obtenido en la sección 3.5 usando los test de Cox y Stuart para 
 tendencia como un test de correlación.
 
+\begin{center}
+\textbf{Solución}
+\end{center}
+
+Se definen y organizan las variables aleatorias X e Y en la siguiente tabla:
+
+\begin{itemize}
+\item $X:$ Reacción del paciente al fármaco 1
+\item $Y:$ Reacción del mismo paciente al fármaco 2
+\end{itemize}
+
 ```{r DatosEJ1}
 x <- c(0.7, -1.6, -0.2, -1.2, -0.1, 3.4, 3.7, 0.8, 0, 2.0)
 y <- c(1.9, 0.8, 1.1, 0.1, -0.1, 4.4, 5.5, 1.6, 4.6, 3.4)
@@ -54,6 +66,69 @@ kable(datos1, longtable = T, booktabs = T,
       caption = "Reacción del paciente al fármaco")
 ```
 
+Como se quiere usar el test exacto de Fisher para probar correlación entre las variables $X$ e $Y$, se realiza un diagrama de dispersión el cual se divide en cuatro cuadrantes al dividir el rango de $X$ en su mediana y similarmente con $Y$.
+
+```{r scatterplot1}
+median_x <- median(x); median_y <- median(y)
+ggplot(mapping = aes(x = x, y = y)) + 
+  geom_point() +
+  geom_segment(aes(x = median_x, xend = median_x,
+                   y = 0, yend = 6)) +
+  geom_segment(aes(x = -2, xend = 4,
+                   y = median_y, yend = median_y)) +
+  theme_bw()
+```
+
+Del diagrama de dispersión se construye la siguiente tabla
+
+```{r tabla_mediana1}
+#Para imprimir
+tabla_mediana1 <- data.frame(Col1 = c(1, 4, 5),
+                             Col2 = c(4, 1, 5),
+                             Total = c(5, 5, 10))
+rownames(tabla_mediana1) <- c("Fila 1", "Fila 2", "Total")
+kable(tabla_mediana1, longtable = T, booktabs = T,
+      caption = "Tabla para test de correlación positiva", 
+      col.names = c("Columna 1", "Columna 2", "Total"))
+
+#Para el test de fisher
+tabla1 <- matrix(c(1, 4,
+                   4, 1), ncol = 2, byrow = T)
+```
+
+Como se quiere probar correlación positiva se plantea el siguiente juego de hipótesis
+
+$$
+\begin{cases}
+H_0: P_1 \geq P_2 \\
+H_1: P_1 < P2
+\end{cases}
+$$
+
+Se usa el estadístico de prueba 
+
+* $T_2: \text{Número de observaciones en la celda de la fila 1, columna 1}$
+
+Donde bajo $H_0$, $P(T_2 = t_2) = \frac{\binom{r}{t_2} \binom{N - r}{C - t_2}}{\binom{N}{C}} \hspace{.2in} x=0, 1, 2, \cdots ,\text{min}\lbrace r, C\rbrace$.
+
+```{r pvalue_a_mano}
+N <- 10; C <- 5; r <- 5
+pvalor <- 0
+for (i in 0:1) {
+  pvalor <-  pvalor + (choose(r, i) * choose(N - r, C - i))/choose(N, C)
+}
+```
+
+
+En esta situación se tiene que $r = 5,\ C = 5,\ N = 10$ y el estadístico de 
+prueba es $T_{2\text{obs}} = 1$. Dadas estas cantidades se calcula el valor-p 
+como $\mathbb{P}(T_2 \leq T_{2\text{obs}}) = \mathbb{P}({T_{2\text{obs}} \leq 1}) = `r pvalor %>% round(4)`$ con lo que a un nivel de significancia de $\alpha = 0.05$ 
+no se rechaza $H_0$ y se concluye que no hay correlación positiva entre $X$ e $Y$.
+
+Comparando con el valor-p del ejemplo mencionado (3.5.4), allí se obtuvo un valor 
+de 0.0312 el cual es suficiente para rechazar la hipótesis nula, sin embargo la
+prueba exacta de Fisher no rechaza, esto se puede deber a que una de ellas es 
+más potente que la otra y la cantidad de datos es límitada.
 
 \section{Ejercicio 4.2.6)}
 
