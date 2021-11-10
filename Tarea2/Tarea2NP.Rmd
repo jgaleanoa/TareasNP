@@ -202,9 +202,29 @@ en el grupo de aspirina y doce en el grupo de placebo dijeron que sí.
 **a)** Use $R_5$ para ver si existe una correlación positiva entre tomar 
 aspirina y sentirse mejor.
 
+\begin{center}
+\textbf{Solución}
+\end{center}
+
+$$R_5=\frac{ad-bc}{\sqrt{r_1r_2c_1c_2}}=\frac{17\cdot13-12\cdot8}{\sqrt{25\cdot25\cdot29\cdot21}}\approx0.2026$$
+
 **b)** Calcule $R_6$.
 
+\begin{center}
+\textbf{Solución}
+\end{center}
+
+$$R_6=\frac{ad-bc}{ad+bc}=\frac{17\cdot13-12\cdot8}{17\cdot13+12\cdot8}\approx0.3943$$
+
+
 **c)** Calcule $R_7$
+
+\begin{center}
+\textbf{Solución}
+\end{center}
+
+$$R_7=\frac{(a+d)-(b+c)}{a+b+c+d}=\frac{30-20}{50}=0.2$$
+Por los valores $R_5,R_6$ y $R_7$ calculados se concluye que existe una correlación positiva entre tomar aspirina y sentirse mejor.
 
 \section{Ejercicio 4.5.6)}
 
@@ -215,6 +235,12 @@ observaciones estuvo por debajo del cuartil inferior de esta distribución y
 ocho entre la mediana y el cuartil superior. ¿Parece que estas observaciones 
 proceden de la distribución descrita?
 
+\begin{center}
+\textbf{Solución}
+\end{center}
+
+Por la información dada en el problema se construye la siguiente tabla
+
 ```{r DatosEJ4}
 datos4 <- data.frame(Probabilidad = c(0.25, 0.5, 0.75),
                      Observacion = c(0, 14, 12)) %>% t()
@@ -223,6 +249,38 @@ kable(datos4, longtable = T, booktabs = T,
       caption = "Información suministrada")
 ```
 
+La hipotesis a probar es:
+
+$$
+\begin{cases}
+H_0: \text{Las observaciones provienen de una }N(12,3) \\
+H_1: \text{Las observaciones no provienen de una }N(12,3)
+\end{cases}
+$$
+Se utiliza el test de bondad de ajuste $\chi^2$ y se calcula el respectivo estadistico de prueba acontinuación:
+
+\begin{gather*}
+E_1=N\cdotp_1=26\cdot 0.25=6.5
+\\
+E_2=N\cdotp_2=26\cdot 0.5=13
+\\
+E_3=N\cdotp_3=26\cdot 0.25=6.5
+\\
+\end{gather*}
+
+Luego el estadistico $T$ calculado es:
+
+\begin{gather*}
+T=\sum_{j=1}^{3}\frac{(O_j-E_j)^2}{E_j}=\sum_{j=1}^{3}\frac{O_j)^2}{E_j}-N
+\\
+T=(\frac{0^2}{6.5}+\frac{14^2}{13}+\frac{12^2}{6.5})-26
+\\
+T_{calculado}=11.2307,T\sim \chi^2_{c-1}\approx \chi^2_2
+\end{gather*}
+
+El valor p de la prueba es:
+$$p=P(\chi^2_2\geq11.2307)=0.00364$$
+Como el valor p es menor para cualquier $\alpha<0.01$ se rechaza $H_0$, es decir, hay evidencia muestral suficiente para sugerir que las observaciones no provienen de una $NOR(12,3)$ .
 
 \section{Ejercicio 4.6.3)}
 
@@ -248,8 +306,57 @@ kable(potencia, longtable = T, booktabs = T, caption = "Potencia de las pruebas"
 ¿Existe una diferencia en la potencia de las tres pruebas cuando se aplican a 
 las poblaciones de las que se obtuvieron los datos simulados?
 
+La información del problema puede ser reescrita de la siguiente manera
+
+```{r tabla pruebas}
+test_reescrita <- data.frame("Filas"=c(1,2,3,"...",56,"...",100,"Total"),
+                         "Test1"=c(1,1,1," ",0," ",0,51),
+                         "Test2"=c(1,1,1," ",0," ",0,41),
+                         "Test3"=c(1,1,1," ",1," ",0,60),
+                         "Total"=c(3,3,3," ",1," ",0,152)
+                         )
+
+kable(test_reescrita,longtable = T, booktabs = T, caption = "Información reescrita",
+      col.names = c("Filas", "Test 1", "Test 2", "Test 3","Total"))
+```
+
+La anterior tabla se resume acontinuación:
+
+\newpage
+
+```{r tabla_pruebas}
+test_resum <- data.frame("Filas"=c(1:8,"Total"),
+                         "Test1"=c(26,6,12,0,0,0,7,0,51),
+                         "Test2"=c(26,6,0,4,0,5,0,0,41),
+                         "Test3"=c(26,0,12,4,18,0,0,0,60),
+                         "Total"=c(78,12,24,8,18,5,7,0,152)
+                         )
+
+kable(test_resum,longtable = T, booktabs = T, caption = "Información resumida",
+      col.names = c("Filas", "Test 1", "Test 2", "Test 3","Total"))
+```
+
+La hipotesis a probar es:
+
+$$
+\begin{cases}
+H_0: \text{La potencia de las 3 pruebas es igual} \\
+H_1: \text{La potencia de las 3 pruebas es diferente}
+\end{cases}
+$$
+Se utiliza el estadistico $T=\frac{c(c-1)\sum_{j=1}^3C_j-(c-1)\cdot N^2}{c\cdot N-\sum_{i=1}^{100}R_i}$ para contrastar la hipotesis. Se tiene:
+
+$$c=3,r=100,N=152,\sum_{j=1}^3C_j=7882,\sum_{i=1}^{100}R_i=325$$
+Luego el T calculado es:
 
 
+\begin{gather*}
+T=\frac{(6\cdot 7882)-(2\cdot 23104)}{456-352}=\frac{1084}{104}
+\\
+T_{calculado}=10.42308,T\chi^2_{0.95,2}
+\\
+\chi^2_{0.95,2}=5.991
+\end{gather*}
 
-
+El $T_{calculado}$ cae en la región critica, por lo tanto se rechaza $H_0$, es decir, hay evidencia muestral suficiente para suguerir que la potencia de las 3 pruebas no es igual a un nivel de significancia de $\alpha=0.05$.
 
