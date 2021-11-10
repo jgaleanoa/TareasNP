@@ -130,6 +130,7 @@ de 0.0312 el cual es suficiente para rechazar la hipótesis nula, sin embargo la
 prueba exacta de Fisher no rechaza, esto se puede deber a que una de ellas es 
 más potente que la otra y la cantidad de datos es límitada.
 
+\newpage
 \section{Ejercicio 4.2.6)}
 
 Un equipo de observadores se mueve a través de un área boscosa e informa todos 
@@ -191,6 +192,7 @@ T = T_1^2 &= \frac{77\left(14 \times 32 -27 \times 4\right)^2}{41 \times 36 \tim
 $$
 Como el Valo-p < 0.05 se rechaza $H_0$ y se concluye que existe diferencia en la probabilidad de que un avistamiento sea detectado como incorrecto. 
 
+\newpage
 \section{Ejercicio 4.4.2)} 
 
 Cincuenta trabajadores de fabrica se reportan en la enfermería por dolor debido 
@@ -206,7 +208,37 @@ aspirina y sentirse mejor.
 \textbf{Solución}
 \end{center}
 
+```{r pastilla_placebo}
+past_pla <- data.frame(Mejora = c(17, 12, 29), 
+                       Nomejora <- c(8, 13, 21),
+                       Total = c(25, 25, 50))
+rownames(past_pla) <- c("Aspirina", "Placebo", "Total")
+kable(past_pla, longtable = T, booktabs = T,
+      caption = "Información del problema", 
+      col.names = c("Mejoró", "No mejoró", "Total"))
+```
+
+Se quiere probar
+
+$$
+\begin{cases}
+H_0: \text{No hay correlación positiva entre el efecto de la píldora y el estado de mejora} \\
+H_1: \text{Existe correlación positiva entre la píldora y el estado de mejora}
+\end{cases}
+$$
+
 $$R_5=\frac{ad-bc}{\sqrt{r_1r_2c_1c_2}}=\frac{17\cdot13-12\cdot8}{\sqrt{25\cdot25\cdot29\cdot21}}\approx0.2026$$
+
+$$
+\sqrt{N} \cdot R_5 \stackrel{\text{aprox}}{\sim} N(0, 1) \\
+$$
+<!--- Ver página 248 del pdf de conover -->
+
+luego $\sqrt{N} \cdot R_5 = \sqrt{50} \cdot 0.2026 = `r round(sqrt(50) * 0.2026, 4)`$
+y se compara con el cuantil superior $z_{1 - \alpha}$, es decir se calcula 
+$\mathbb{P}(`r round(sqrt(50) * 0.2026, 4)` > 1.6449) = 0.0760 > 0.05$ por lo que no 
+se rechaza la hipótesis de que no hay correlación positiva entre el efecto de 
+la píldora y el estado de mejora.
 
 **b)** Calcule $R_6$.
 
@@ -224,8 +256,8 @@ $$R_6=\frac{ad-bc}{ad+bc}=\frac{17\cdot13-12\cdot8}{17\cdot13+12\cdot8}\approx0.
 \end{center}
 
 $$R_7=\frac{(a+d)-(b+c)}{a+b+c+d}=\frac{30-20}{50}=0.2$$
-Por los valores $R_5,R_6$ y $R_7$ calculados se concluye que existe una correlación positiva entre tomar aspirina y sentirse mejor.
 
+\newpage
 \section{Ejercicio 4.5.6)}
 
 Se obtuvieron veintiséis observaciones y surgió la pregunta de si siguen una
@@ -257,31 +289,32 @@ H_0: \text{Las observaciones provienen de una }N(12,3) \\
 H_1: \text{Las observaciones no provienen de una }N(12,3)
 \end{cases}
 $$
-Se utiliza el test de bondad de ajuste $\chi^2$ y se calcula el respectivo estadistico de prueba acontinuación:
+Se utiliza el test de bondad de ajuste $\chi^2$ y se calcula el respectivo estadístico de prueba a continuación:
 
 \begin{gather*}
-E_1=N\cdotp_1=26\cdot 0.25=6.5
+E_1=N\cdot p_1=26\cdot 0.25=6.5
 \\
-E_2=N\cdotp_2=26\cdot 0.5=13
+E_2=N\cdot p_2=26\cdot 0.5=13
 \\
-E_3=N\cdotp_3=26\cdot 0.25=6.5
+E_3=N\cdot p_3=26\cdot 0.25=6.5
 \\
 \end{gather*}
 
 Luego el estadistico $T$ calculado es:
 
 \begin{gather*}
-T=\sum_{j=1}^{3}\frac{(O_j-E_j)^2}{E_j}=\sum_{j=1}^{3}\frac{O_j)^2}{E_j}-N
+T=\sum_{j=1}^{3}\frac{(O_j-E_j)^2}{E_j}=\sum_{j=1}^{3}\frac{O_j^2}{E_j}-N
 \\
 T=(\frac{0^2}{6.5}+\frac{14^2}{13}+\frac{12^2}{6.5})-26
 \\
-T_{calculado}=11.2307,T\sim \chi^2_{c-1}\approx \chi^2_2
+T_{\text{calculado}}=11.2307,T\sim \chi^2_{c-1}\approx \chi^2_2
 \end{gather*}
 
 El valor p de la prueba es:
 $$p=P(\chi^2_2\geq11.2307)=0.00364$$
 Como el valor p es menor para cualquier $\alpha<0.01$ se rechaza $H_0$, es decir, hay evidencia muestral suficiente para sugerir que las observaciones no provienen de una $NOR(12,3)$ .
 
+\newpage
 \section{Ejercicio 4.6.3)}
 
 En un intento de comparar el poder relativo de tres pruebas estadísticas, 
@@ -320,7 +353,7 @@ kable(test_reescrita,longtable = T, booktabs = T, caption = "Información reescr
       col.names = c("Filas", "Test 1", "Test 2", "Test 3","Total"))
 ```
 
-La anterior tabla se resume acontinuación:
+La anterior tabla se resume a continuación:
 
 \newpage
 
