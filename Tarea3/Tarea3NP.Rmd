@@ -35,3 +35,93 @@ library(gtools)
 
 \pagestyle{myheadings}
 \setcounter{page}{3}
+
+\section{Ejercicio 5.1.6)} 
+
+Diez tiendas de campaña con camuflaje simple y diez con camuflajes estampados 
+se instalan en un área boscosa, y se envía un equipo de observadores para 
+encontrarlas. El equipo informa la distancia a la que avistaron por primera 
+vez cada tienda (solo avistamientos verdaderos) hasta que se encuentran las 20 
+tiendas. El propósito del estudio es determinar si el camuflaje estampado es más
+difícil de detectar que el camuflaje simple. Las distancias a las que se detecta 
+cada tienda se indican a continuación. 
+
+```{r}
+sencillo <- c("25, 28, 16, 34, 38, 21, 29, 43, 32, 36")
+estampado <- c("26, 12, 16, 21, 20, 14, 10, 18, 22, 20")
+camos_table <- data.frame(Tipo = c("Sencillo", "Estampado"), 
+                          Distancias = c(sencillo, estampado))
+kable(camos_table, longtable = T, booktabs = T, 
+      caption = "Datos sobre las distancias de camuflajes", align = c("c", "c"))
+```
+
+**a)** Realice la prueba de hipótesis.
+
+**b)** Encuentre un intervalo de confianza del 95\% para la diferencia en 
+las distancias medias de detección.
+
+\section{Ejercicio 5.2.6)}
+
+Se asignaron doce voluntarios a cada uno de los tres planes de reducción de peso. 
+La asignación de los voluntarios a los planes fue aleatoria y se asumió que los 
+36 voluntarios en total se parecerían a una muestra aleatoria de personas que 
+podrían probar un programa de reducción de peso. Pruebe la hipótesis nula de 
+que no hay diferencia en las distribuciones de probabilidad de la cantidad de 
+peso perdido bajo los tres programas con la alternativa de que hay una 
+diferencia. Los resultados se expresan como la cantidad de libras perdidas por 
+cada persona.
+
+```{r}
+A <- c(2, 12, 5, 4, 26, 8, 17, 4, 25, 6, 21, 6)
+B <- c(17, 15, 3, 19, 5, 14, 5, 6, 19, 4, 9, 7)
+C <- c(29, 3, 25, 28, 11, 7, 5, 25, 32, 24, 36, 20)
+planes_dieta <- data.frame(Plan_A = A, Plan_B = B, Plan_C = C)
+kable(planes_dieta, longtable = T, booktabs = T,
+      caption = "Datos sobre los planes de dietas", 
+      col.names = c("Plan A", "Plan B", "Plan C"))
+```
+
+\section{Ejercicio 5.3.2)}
+
+En los últimos años se ha construido una línea divisoria de aguas en particular, 
+con desarrollos de viviendas, represas, etc. Una muestra aleatoria de tasas de 
+flujo de arroyos (pies cúbicos por minuto) para un arroyo en esa cuenca se 
+compara con una muestra de tasas de épocas anteriores para ver si la 
+variabilidad ha cambiado.
+
+```{r}
+tasas_actuales <- c(32, 36, 41, 27, 35, 48, 31, 28)
+tasas_pasadas <- c(39, 21, 58, 46, 30, 22, 17, 19)
+tasas_flujo <- data.frame(Act = tasas_actuales, pas = tasas_pasadas)
+kable(tasas_flujo, longtable = T, booktabs = T,
+      caption = "Datos sobre tasas de flujo de cascadas",
+      col.names = c("Tasas actuales", "Tasas pasadas"))
+```
+
+¿Existe diferencia significativa en las varianzas?
+
+\section{Ejercicio 5.4.1)}
+
+Un esposo y una esposa que juegan a los bolos juntos, mantuvieron sus puntajes 
+durante 10 líneas para ver si había una correlación entre sus puntajes.
+
+```{r}
+esposo <- c(147, 158, 131, 142, 183, 151, 196, 129, 155, 158)
+esposa <- c(122, 128, 125, 123, 115, 120, 108, 143, 124, 123)
+bolos <- data.frame(Esposo = esposo, Esposa = esposa)
+kable(bolos, longtable = T, booktabs = T,
+      caption = "Datos sobre los puntajes de bolos",
+      col.names = c("Puntaje del esposo", "Puntaje de la esposa"))
+```
+
+**a)** Calcule $\rho$
+
+**b)** Calcule $\tau$
+
+**c)** Pruebe la hipótesis de independencia usando una prueba de dos colas 
+basada en el coeficiente $\rho$
+
+**d)** Repita lo hecho en **c)** pero con el coeficiente $\tau$
+
+
+
