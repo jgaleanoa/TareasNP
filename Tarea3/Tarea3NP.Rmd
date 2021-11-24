@@ -40,15 +40,15 @@ library(gtools)
 
 Diez tiendas de campaña con camuflaje simple y diez con camuflajes estampados 
 se instalan en un área boscosa, y se envía un equipo de observadores para 
-encontrarlas. El equipo informa la distancia a la que avistaron por primera 
+encontrarlos. El equipo informa la distancia a la que avistaron por primera 
 vez cada tienda (solo avistamientos verdaderos) hasta que se encuentran las 20 
 tiendas. El propósito del estudio es determinar si el camuflaje estampado es más
 difícil de detectar que el camuflaje simple. Las distancias a las que se detecta 
 cada tienda se indican a continuación. 
 
 ```{r}
-sencillo <- c("25, 28, 16, 34, 38, 21, 29, 43, 32, 36")
-estampado <- c("26, 12, 16, 21, 20, 14, 10, 18, 22, 20")
+sencillo <- c("25 28 16 34 38 21 29 43 32 36")
+estampado <- c("26 12 16 21 20 14 10 18 22 20")
 camos_table <- data.frame(Tipo = c("Sencillo", "Estampado"), 
                           Distancias = c(sencillo, estampado))
 kable(camos_table, longtable = T, booktabs = T, 
@@ -57,8 +57,115 @@ kable(camos_table, longtable = T, booktabs = T,
 
 **a)** Realice la prueba de hipótesis.
 
+**Solución**
+
+Se definen las variables aleatorias 
+
+$$
+\begin{aligned}
+X &: \text{Camuflajes detectados de tipo sencillo} \\
+Y &: \text{Camuflajes detectados de tipo estampado}
+\end{aligned}
+$$
+
+Para el problema propuesto, se tiene que un camuflaje es más fácil de detectar 
+si este se nota a una mayor distancia ya que si es necesario acercarse a él e 
+inspeccionarlo detalladamente para confirmar que es una tienda se debe a que 
+está bien camuflado, luego el juego de hipótesis de interés es el siguiente:
+
+$$
+\begin{cases}
+H_0: \mu_x = \mu_y \\
+H_1: \mu_x > \mu_y
+\end{cases}
+$$
+```{r}
+sencillo <-  c(25, 28, 16, 34, 38, 21, 29, 43, 32, 36) %>% sort()
+estampado <- c(26, 12, 16, 21, 20, 14, 10, 18, 22, 20) %>% sort()
+```
+
+En la siguiente tabla se presentan los valores de X e Y con sus respectivos rangos
+
+\newpage
+
+```{r}
+X <- rep(" ", 20)
+ind_x <- c(5, 9, 12, 14:20)
+X[ind_x] <- as.character(sencillo)
+
+Y <- rep(" ", 20)
+ind_y <- c(1:4, 6:8, 10:11, 13)
+Y[ind_y] <- as.character(estampado)
+
+rangos <- rank(c(sencillo, estampado)) %>% sort()
+datos1_rangos <- data.frame(X = X, Y = Y, Rango = rangos)
+
+kable(datos1_rangos, longtable = T, booktabs = T,
+      caption = "Rangos de X e Y")
+```
+
+Se usa el estdístico de prueba 
+$T_1 = \frac{T - n \left(\frac{N + 1}{2}\right) - \frac{1}{2}}{\sqrt{\frac{nm}{N(N-1)} \sum_{i=1}^{N}R_i^2 - \frac{nm(N+1)^2}{4(N-1)}}}$ 
+donde $T = \sum_{i=1}^{n} R(X_i)$ y $N = n + m$ (note que se usa el factor de correción).
+
+```{r}
+n <- m <- 10
+N <- n + m
+T_stat <- sum(rank(c(sencillo, estampado))[1:10])
+Ri2 <- sum(rangos^2)
+num_T1 <- T_stat - n*((N+1)/2) -1/2
+den_T1 <- sqrt((n*m/(N*(N - 1))) * Ri2 - (n*m*(N + 1)^2)/(4*(N - 1)))
+T1 <- num_T1/den_T1
+pvalue <- pnorm(T1, lower.tail = F)
+
+```
+
+
+Con la información muestral se tiene 
+$n = m = 10,\ N = 20, \ T = `r T_stat`, \ \sum_{i = 1}^{20}R_i^2 = `r Ri2`$, 
+luego al reemplazar todo en la formula se obtiene $T_1 \approx `r T1 %>% round(4)`$ 
+y se calcula el valor-p como 
+$\mathbb{P}(Z \geq T_1) = \mathbb{P}(Z \geq `r T1 %>% round(4)`) = `r pvalue %>% round(4)`$
+con lo que a un nivel de significancia de $\alpha = 0.01$ se rechaza $H_0$, es 
+decir, existe evidencia muestral suficiente para concluir que las tiendas que 
+usan el equipo de camuflaje estampado son más difíciles de detectar que las 
+del equipo sencillo.
+
 **b)** Encuentre un intervalo de confianza del 95\% para la diferencia en 
 las distancias medias de detección.
+
+**Solución**
+
+Para construir el IC del 95\% para la diferencia de medias $\mu_x - \mu_y$ se 
+calculan las $nm$ diferencias entre $X_i, \ Y_j$ para 
+$i\in \{1, \cdots, n\}, \ j \in \{1, \cdots, m\}$, es decir, para el problema 
+dado se deben calcular 100 diferencias entre todos los pares de observaciones 
+posibles $X_i - Y_j$, luego estas diferencias son ordenadas de forma ascendente 
+como $d^{(1)} \leq d^{(2)} \leq \cdots \leq d^{(nm)}$ y se toman los límites 
+superior e inferior como $\left(d^{(k)}, \ d^{(nm - k+1)}\right)$ 
+respectivamente, donde $k = W_{\frac{\alpha}{2}} -\frac{n(n+1)}{2}$ y 
+$W_{\frac{\alpha}{2}}$ es el cuantil inferior $\frac{\alpha}{2}$ que se puede 
+encontrar en la tabla $A7$ del libro de Conover.
+
+Según la tabla $A7$ de Conover, para $n = m = 10$, $W_{0.025} = 79$, 
+luego $k = 79 - \frac{10 \times 11}{2} = 79 - \frac{110}{2} = 79 - 55 = 24$. 
+Por lo tanto, los límites superior e inferior corresponden a las observaciones
+$\left(d^{(24)}, \ d^{(77)}\right)$. Se puede verificar que $d^{(24)} = 6$ y 
+$d^{(77)} = 19$, luego un intervalo de confianza del 95\% para la diferencia 
+de medias $\mu_x - \mu_y$ es $IC_{95\%} = (6, \ 19)$. Como el intervalo no 
+contiene al cero, no existe evidencia muestral suficiente que sugiera que la 
+distancia promedio para detectar tiendas con camuflaje de tipo sencillo sea 
+igual a las de camuflaje estampado con una confianza del 95\%.
+
+```{r}
+comp_pares <- (rep(sencillo, each = length(estampado)) - estampado) %>%
+  sort()
+IC_1b <- c(comp_pares[24], comp_pares[77]) 
+
+rm(list = setdiff(ls(), lsf.str()))
+```
+
+\newpage
 
 \section{Ejercicio 5.2.6)}
 
