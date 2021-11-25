@@ -368,7 +368,7 @@ T_obs <-sum(R_U^2)
 R_bar2 <- (1/N)*(sum(R_U^2)+sum(R_V^2))
 sumR4 <- sum(R_U^4)+sum(R_V^4)
 T1_obs <- (T_obs-n*R_bar2)/sqrt(((n*m/(N*(N-1)))*sumR4-(n*m/(N-1))*R_bar2^2))
-T1_obs
+#T1_obs
 ```
 
 $$T_{1_{obs}}=-2.208273$$
@@ -378,20 +378,20 @@ $$Rc=\{T_1/T_1>Z_{0.975} \vee T<Z_{0.025}\}$$
 ```{r}
 a <- (n*(N+1)*(2*N+1))/6
 b <- sqrt((n*m*(N+1)*(2*N+1)*(8*N+11))/180) 
-qnorm(0.975)
-qnorm(0.025)
+#qnorm(0.975)
+#qnorm(0.025)
 
 ```
 
 $$Rc=\{T_1/T_1>1.959964 \vee T_1<-1.959964\}$$
 ```{r}
 q_est <- (T_obs-a)/b
-q_est
-pnorm(q_est)
-pnorm(q_est,lower.tail = F)
+#q_est
+#pnorm(q_est)
+#pnorm(q_est,lower.tail = F)
 
 p_valor <- 2*pnorm(q_est)
-p_valor
+#p_valor
 ```
 $$p_{valor}=0.02752009$$
 
@@ -413,12 +413,136 @@ kable(bolos, longtable = T, booktabs = T,
 
 **a)** Calcule $\rho$
 
+**Solución**
+
+Sea $X$ el puntaje del esposo en bolos y $Y$ el puntaje de la espasa en bolos. Los rangos asignados para cada variable son:
+
+```{r}
+n <- length(esposo)
+R_X <- sort(esposo) %>% rank(ties.method = "average")
+R_Y <- sort(esposa) %>% rank(ties.method = "average")
+
+indices_X <- match(esposo,sort(esposo))
+indices_Y <- match(esposa,sort(esposa))
+
+R_XY <- R_X[indices_X]*R_Y[indices_Y]
+
+tabla <- data.frame("X"=esposo,"R(X)"=R_X[indices_X],"Y"=esposa,"R(Y)"=R_Y[indices_Y],"R(X)R(Y)"=R_XY)
+
+kable(tabla, longtable = T, booktabs = T,
+      caption = "Datos sobre los puntajes de bolos",
+      col.names = c("X","R(X)","Y","R(Y)","R(X)R(Y)"), align = "c")
+
+```
+
+```{r}
+b <- n*((n+1)/2)^2
+rho <- (sum(R_XY)-b)/(sqrt(sum(R_X^2)-b)*sqrt(sum(R_Y^2)-b))
+#rho
+```
+Como $n<30$: $\rho=\frac{\sum_{i=1}^nR(X_i)R(Y_i)-n(\frac{n+1}{2})^2}{(\sum_{i=1}^nR^2(X_i)-n(\frac{n+1}{2})^2)^{1/2}(\sum_{i=1}^nR^2(Y_i)-n(\frac{n+1}{2})^2)^{1/2}}$
+
+$$\rho_{obs}=-0.6128049$$
+
 **b)** Calcule $\tau$
+
+**Solución**
+
+```{r}
+pares <- paste0("(",esposo,",",esposa,")")
+data_pares <- data.frame("Pares"=pares,"Nc"=rep(0,10),"Nd"=rep(0,10))
+
+# El dato 7 es el max, no se compara
+for (i in c(1:6,8:10)) {
+  idx <- which(esposo>esposo[i])
+  if(esposa[i]==esposa[10] & i!=10){
+    # 0.5 del (y2-y1)/(x2-x1)=0
+    data_pares[i,2] <- sum(ifelse((esposa[idx]-esposa[i])/(esposo[idx]-esposo[i])>0,1,0))+0.5 
+    data_pares[i,3] <- sum(ifelse((esposa[idx]-esposa[i])/(esposo[idx]-esposo[i])<0,1,0))+0.5 
+  }else{
+    data_pares[i,2] <- sum(ifelse((esposa[idx]-esposa[i])/(esposo[idx]-esposo[i])>0,1,0))
+    data_pares[i,3] <- sum(ifelse((esposa[idx]-esposa[i])/(esposo[idx]-esposo[i])<0,1,0))
+  }
+  
+  
+}
+
+# No hay empates
+data_pares <- cbind(esposo,esposa,data_pares[,-1])
+kable(data_pares, longtable = T, booktabs = T,
+      caption = "Pares concordantes y discordantes",
+      col.names = c("Xi","Yi","Pares concordantes","Pares discordantes"), align = "c")
+
+```
+Como hay empates: $\tau=\frac{N_c-N_d}{N_c+N_d}$
+
+```{r}
+#nc <- sum(data_pares[,2])
+#nd <- sum(data_pares[,3])
+#(nc-nd)/(nc+nd)
+```
+
+
+$$\tau_{obs}=-0.5227273$$
 
 **c)** Pruebe la hipótesis de independencia usando una prueba de dos colas 
 basada en el coeficiente $\rho$
 
+**Solución**
+
+La hipotesis a contrastar es:
+
+$$
+\begin{cases}
+H_0: \text{los }X_i \text{ y los }Y_i \text{ son mutuamente independientes}\\
+H_1: \text{los }X_i \text{ y los }Y_i \text{ no son mutuamente independientes}
+\end{cases}
+$$
+La region critica a un nivel de significancia de $\alpha=0.05$:
+
+$$Rc=\{\rho/|\rho|>W_{0.975}\}$$
+```{r}
+#(1/sqrt(n-1))*qnorm(0.025)
+#(1/sqrt(n-1))*qnorm(0.975)
+
+#2*pnorm(abs(-0.6128049)*sqrt(n-1),lower.tail = F)
+```
+
+$$ W_{0.975}=0.6533213$$ 
+$$Rc=\{\rho/|\rho|>0.6533213\}\text{ , }p_{valor}=2\cdot P(Z\geq\rho\sqrt{n-1})=0.06600132$$
+Como el $|\rho|\notin Rc$ y el $p_{valor}>0.05$ se rechaza la hipotesis nula, es deicir, no hay evidencia muestral para suguerir que los $X_i$ y los $Y_i$ no son mutuamente independientes.
+
+
 **d)** Repita lo hecho en **c)** pero con el coeficiente $\tau$
+
+**Solución**
+
+La hipotesis a contrastar es:
+
+$$
+\begin{cases}
+H_0: \text{X y Y son independientes}\\
+H_1: \text{Los pares de observaciones tienen a ser concordantes o discordantes}
+\end{cases}
+$$
+
+$$Rc=\{\tau/\tau<W_{0.025} \vee \tau>W_{0.975}\}$$
+Según la tabla A11 de conover:
+
+$$W_{0.025}=-0.4667 \text{ y } W_{0.975}=0.4667$$
+$$Rc=\{\tau/\tau<-0.4667 \vee \tau>0.4667\}$$
+```{r}
+a <- sqrt(n*(n-1)*(2*n+5))
+#T_ <- nc-nd
+#pnorm((T_+1)*sqrt(18)/a)
+#pnorm((T_-1)*sqrt(18)/a,lower.tail = F)
+
+#2*pnorm((T_+1)*sqrt(18)/a)
+```
+
+$$p_{valor}=0.04909798$$
+
+Como $\tau\in Rc$ y el $p_{valor}$ esta muy cercano  a la frontera de significancia $\alpha=0.05$ se rechaza $H_0$, es decir, hay evidencia muestras para suguerir que los pares de observaciones tienden a ser concordantes o discordantes. 
 
 
 
