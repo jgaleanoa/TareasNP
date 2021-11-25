@@ -323,6 +323,80 @@ kable(tasas_flujo, longtable = T, booktabs = T,
 
 ¿Existe diferencia significativa en las varianzas?
 
+**Solución**
+
+Sea $X$ la tasa de flujo actual del arroyo y $Y$ la tasa de flujo pasada del arroyo.
+
+La hipotesis a probar es:
+
+$$
+\begin{cases}
+H_0: \text{X e Y son identicamente distribuidas excepto posiblemente con media diferentes} \\
+H_1: Var(X)\neq Var(Y)
+\end{cases}
+$$
+Los $U_i$ y $V_j$ calculados con sus respectivos rangos son:
+
+```{r}
+n <- m <- length(tasas_actuales)
+N <- n+m
+X <- tasas_actuales
+Y <- tasas_pasadas
+U <- abs(X-mean(X))
+V <- abs(Y-mean(Y))
+U_V <- c(U,V) %>% sort()
+rangos_U_V <- rank(U_V,ties.method ="average")
+
+R_U <- rangos_U_V[c(which(U_V %in% sort(U)))]
+R_V <- rangos_U_V[c(which(U_V %in% sort(V)))]
+
+UVR <- data.frame("U_i"=sort(U),"R(U_i)"=R_U,
+                  "V_i"=sort(V),"R(V_i)"=R_V)
+
+kable(UVR, longtable = T, booktabs = T,
+      caption = "Variables centradas y sus rangos",
+      col.names = c("U", "R(U)","V","R(V)"), align = "c")
+```
+
+Como $N=n+m$ y hay empates el estadistico de prueba sera:
+
+$$T=\sum_{i=1}^nR^2(U_i)$$
+$$T_1=\frac{T-n\bar{R}^2}{[\frac{nm}{N(N-1)}\sum_{i=1}^NR_i^4-\frac{nm}{N-1}(\bar{R}^2)^2]^\frac{1}{2}}$$
+
+```{r}
+T_obs <-sum(R_U^2) 
+R_bar2 <- (1/N)*(sum(R_U^2)+sum(R_V^2))
+sumR4 <- sum(R_U^4)+sum(R_V^4)
+T1_obs <- (T_obs-n*R_bar2)/sqrt(((n*m/(N*(N-1)))*sumR4-(n*m/(N-1))*R_bar2^2))
+T1_obs
+```
+
+$$T_{1_{obs}}=-2.208273$$
+
+La region critica a un nivel $\alpha=0.05$:
+$$Rc=\{T_1/T_1>Z_{0.975} \vee T<Z_{0.025}\}$$
+```{r}
+a <- (n*(N+1)*(2*N+1))/6
+b <- sqrt((n*m*(N+1)*(2*N+1)*(8*N+11))/180) 
+qnorm(0.975)
+qnorm(0.025)
+
+```
+
+$$Rc=\{T_1/T_1>1.959964 \vee T_1<-1.959964\}$$
+```{r}
+q_est <- (T_obs-a)/b
+q_est
+pnorm(q_est)
+pnorm(q_est,lower.tail = F)
+
+p_valor <- 2*pnorm(q_est)
+p_valor
+```
+$$p_{valor}=0.02752009$$
+
+Como $T_{obs}\in Rc$ y $p_{valor}<0.05$ se rechaza $H_0$, es decir hay evidencia muestral para suguerir que existe diferencia entre la varianza de la tasa de flujo actual y la taza de flujo pasada del arroyo.
+
 \section{Ejercicio 5.4.1)}
 
 Un esposo y una esposa que juegan a los bolos juntos, mantuvieron sus puntajes 
