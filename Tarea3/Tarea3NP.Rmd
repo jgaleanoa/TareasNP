@@ -91,24 +91,24 @@ En la siguiente tabla se presentan los valores de X e Y con sus respectivos rang
 \newpage
 
 ```{r}
-X <- rep(" ", 20)
-ind_x <- c(5, 9, 12, 14:20)
-X[ind_x] <- as.character(sencillo)
+sencillo <-  c(25, 28, 16, 34, 38, 21, 29, 43, 32, 36)
+estampado <- c(26, 12, 16, 21, 20, 14, 10, 18, 22, 20)
 
-Y <- rep(" ", 20)
-ind_y <- c(1:4, 6:8, 10:11, 13)
-Y[ind_y] <- as.character(estampado)
-
-rangos <- rank(c(sencillo, estampado)) %>% sort()
-datos1_rangos <- data.frame(X = X, Y = Y, Rango = rangos)
+rangos <- rank(c(sencillo, estampado))
+r1 <- rangos[1:10]
+r2 <- rangos[11:20]
+datos1_rangos <- data.frame(X = sencillo, R1 = r1, 
+                            Y = estampado, R2 = r2) %>%
+  arrange(X, Y)
 
 kable(datos1_rangos, longtable = T, booktabs = T,
-      caption = "Rangos de X e Y", align = "c")
+      caption = "Rangos de X e Y", align = "c",
+      col.names = c("X", "Rangos", "Y", "Rangos"))
 ```
 
 Se usa el estdístico de prueba 
 $T_1 = \frac{T - n \left(\frac{N + 1}{2}\right) - \frac{1}{2}}{\sqrt{\frac{nm}{N(N-1)} \sum_{i=1}^{N}R_i^2 - \frac{nm(N+1)^2}{4(N-1)}}}$ 
-donde $T = \sum_{i=1}^{n} R(X_i)$ y $N = n + m$ (note que se usa el factor de correción).
+donde $T = \sum_{i=1}^{n} R(X_i)$ y $N = n + m$ (note que se usa el factor de corrección).
 
 ```{r}
 n <- m <- 10
@@ -171,8 +171,10 @@ rm(list = setdiff(ls(), lsf.str()))
 
 \section{Ejercicio 5.2.6)}
 
-Se asignaron doce voluntarios a cada uno de los tres planes de reducción de peso. 
-La asignación de los voluntarios a los planes fue aleatoria y se asumió que los 
+Se asignaron doce voluntarios a cada uno de los tres planes de reducción 
+de peso. 
+
+La asignación de los voluntarios a los planes fue aleatoria y se asumió que los
 36 voluntarios en total se parecerían a una muestra aleatoria de personas que 
 podrían probar un programa de reducción de peso. Pruebe la hipótesis nula de 
 que no hay diferencia en las distribuciones de probabilidad de la cantidad de 
@@ -194,7 +196,7 @@ kable(planes_dieta, longtable = T, booktabs = T,
 **Solución**
 
 Se quiere probar si las funciones de distribución de los diferentes planes para 
-perder peso son identicos, por lo que se plantea el conjunto de hipótesis
+perder peso son idénticos, por lo que se plantea el conjunto de hipótesis
 
 $$
 \begin{cases}
@@ -203,7 +205,8 @@ H_1: \mu_i \neq \mu_k \hspace{.1in} \text{Para algunos } i,k \in \{1,2,3\}
 \end{cases}
 $$
 Note que se codificaron los planes A, B y C con los números $1, \ 2, \ 3$ 
-respectivamente. Para este caso $n_i = 12 \ \forall_i$, luego $N = 3 \times 12 = 36$.
+respectivamente. Para este caso $n_i = 12 \ \forall_i$, luego 
+$N = 3 \times 12 = 36$.
 
 En la siguiente tabla se presentan los respectivos rangos de cada una de las 
 observaciones de los planes de perdida de peso
@@ -262,11 +265,11 @@ se concluye que existen diferencias en al menos un par de medias, es decir,
 las distribuciones de probabilidad de al menos un par de planes de reducción de 
 peso son diferentes.
 
-Dado el rechazo de $H_0$ se pueden realizar comparaciones multiples para 
+Dado el rechazo de $H_0$ se pueden realizar comparaciones múltiples para 
 determinar cuales pares de medias son diferentes si se cumple la siguiente desigualdad
 
 $$
-\left|\frac{R_i}{n_i} - \frac{R_j}{n_j}\right| > t_{1 - \frac{\alpha}{2}(N-K)} \sqrt{\left(S^2 \frac{N - 1 - T}{N - K}\right) \left(\frac{1}{n_i} + \frac{1}{n_j}\right)}
+\left|\frac{R_i}{n_i} - \frac{R_j}{n_j}\right| > t_{1 - \frac{\alpha}{2},(N-K)} \sqrt{\left(S^2 \frac{N - 1 - T}{N - K}\right) \left(\frac{1}{n_i} + \frac{1}{n_j}\right)}
 $$
 
 ```{r}
@@ -280,14 +283,15 @@ diffs <- krus_comp$comparison$Difference %>% abs() %>% round(4)
 medias <- c("1 - 2", "1 - 3", "2 - 3")
 desigualdad <- c("<", "<", ">")
 mult_comp <- data.frame(Medias = medias, Diferencias = diffs,
-                        Desigualdad = desigualdad, Valor_critico = valores_criticos)
+                        Desigualdad = desigualdad, 
+                        Valor_critico = valores_criticos)
 
 kable(mult_comp, longtable = T, booktabs = T, escape = F,
       caption = "Comparaciones multiples de medias",
       col.names = c("$\\mu_i - \\mu_j$", 
                     "$\\left|\\frac{R_i}{n_i} - \\frac{R_j}{n_j}\\right|$", 
                     " ", 
-                    "$t_{1 - \\frac{\\alpha}{2}(N-K)} \\sqrt{\\left(S^2 \\frac{N - 1 - T}{N - K}\\right) \\left(\\frac{1}{n_i} + \\frac{1}{n_j}\\right)}$"),
+                    "$t_{1 - \\frac{\\alpha}{2},(N-K)} \\sqrt{\\left(S^2 \\frac{N - 1 - T}{N - K}\\right) \\left(\\frac{1}{n_i} + \\frac{1}{n_j}\\right)}$"),
       align = "c")
 ```
 
@@ -306,7 +310,8 @@ decisión únicamente con la información presente puede ser algo polémico.
 
 \section{Ejercicio 5.3.2)}
 
-En los últimos años se ha construido una línea divisoria de aguas en particular, 
+En los últimos años se ha construido una línea divisoria de aguas en
+particular, 
 con desarrollos de viviendas, represas, etc. Una muestra aleatoria de tasas de 
 flujo de arroyos (pies cúbicos por minuto) para un arroyo en esa cuenca se 
 compara con una muestra de tasas de épocas anteriores para ver si la 
@@ -374,7 +379,7 @@ T1_obs <- (T_obs-n*R_bar2)/sqrt(((n*m/(N*(N-1)))*sumR4-(n*m/(N-1))*R_bar2^2))
 $$T_{1_{obs}}=-2.208273$$
 
 La region critica a un nivel $\alpha=0.05$:
-$$Rc=\{T_1/T_1>Z_{0.975} \vee T<Z_{0.025}\}$$
+$$Rc=\{T_1/T_1>Z_{0.975} \vee T_1 <Z_{0.025}\}$$
 ```{r}
 a <- (n*(N+1)*(2*N+1))/6
 b <- sqrt((n*m*(N+1)*(2*N+1)*(8*N+11))/180) 
@@ -395,7 +400,11 @@ p_valor <- 2*pnorm(q_est)
 ```
 $$p_{valor}=0.02752009$$
 
-Como $T_{obs}\in Rc$ y $p_{valor}<0.05$ se rechaza $H_0$, es decir hay evidencia muestral para suguerir que existe diferencia entre la varianza de la tasa de flujo actual y la taza de flujo pasada del arroyo.
+Como $T_{obs}\in Rc$ y $p_{valor}<0.05$ se rechaza $H_0$, es decir hay
+evidencia muestral para sugerir que existe diferencia entre la varianza 
+de la tasa de flujo actual y la tasa de flujo pasada del arroyo.
+
+\newpage
 
 \section{Ejercicio 5.4.1)}
 
@@ -415,7 +424,8 @@ kable(bolos, longtable = T, booktabs = T,
 
 **Solución**
 
-Sea $X$ el puntaje del esposo en bolos y $Y$ el puntaje de la espasa en bolos. Los rangos asignados para cada variable son:
+Sea $X$ el puntaje del esposo en bolos y $Y$ el puntaje de la esposa en bolos.
+Los rangos asignados para cada variable son:
 
 ```{r}
 n <- length(esposo)
@@ -479,7 +489,7 @@ Como hay empates: $\tau=\frac{N_c-N_d}{N_c+N_d}$
 ```{r}
 #nc <- sum(data_pares[,2])
 #nd <- sum(data_pares[,3])
-#(nc-nd)/(nc+nd)
+#(nc-nd)/(nc+nd)}
 ```
 
 
@@ -509,8 +519,8 @@ $$Rc=\{\rho/|\rho|>W_{0.975}\}$$
 ```
 
 $$ W_{0.975}=0.6533213$$ 
-$$Rc=\{\rho/|\rho|>0.6533213\}\text{ , }p_{valor}=2\cdot P(Z\geq\rho\sqrt{n-1})=0.06600132$$
-Como el $|\rho|\notin Rc$ y el $p_{valor}>0.05$ se rechaza la hipotesis nula, es deicir, no hay evidencia muestral para suguerir que los $X_i$ y los $Y_i$ no son mutuamente independientes.
+$$Rc=\{\rho/|\rho|>0.6533213\}\text{ , }p_{valor}=2\cdot P(Z\geq|\rho|\sqrt{n-1})=0.06600132$$
+Como el $|\rho|\notin Rc$ y el $p_{valor}>0.05$ no se rechaza la hipótesis nula, es decir, no hay evidencia muestral para sugerir que los $X_i$ y los $Y_i$ no son mutuamente independientes.
 
 
 **d)** Repita lo hecho en **c)** pero con el coeficiente $\tau$
@@ -522,7 +532,7 @@ La hipotesis a contrastar es:
 $$
 \begin{cases}
 H_0: \text{X y Y son independientes}\\
-H_1: \text{Los pares de observaciones tienen a ser concordantes o discordantes}
+H_1: \text{Los pares de observaciones tienden a ser concordantes o discordantes}
 \end{cases}
 $$
 
@@ -540,9 +550,11 @@ a <- sqrt(n*(n-1)*(2*n+5))
 #2*pnorm((T_+1)*sqrt(18)/a)
 ```
 
-$$p_{valor}=0.04909798$$
+$$p_{valor}=0.03538396$$
 
-Como $\tau\in Rc$ y el $p_{valor}$ esta muy cercano  a la frontera de significancia $\alpha=0.05$ se rechaza $H_0$, es decir, hay evidencia muestras para suguerir que los pares de observaciones tienden a ser concordantes o discordantes. 
+Como $\tau\in Rc$ y el $p_{valor} < 0.05$ se rechaza $H_0$, es decir, hay
+evidencia muestras para sugerir que los pares de observaciones tienden a
+ser concordantes o discordantes. 
 
 
 
