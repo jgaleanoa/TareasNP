@@ -37,3 +37,116 @@ library(latex2exp)
 
 \pagestyle{myheadings}
 \setcounter{page}{3}
+
+\section{Ejercicio 5.5.2)}
+
+Una muestra aleatoria de colegios y universidades americanas resulta en los
+siguientes números de estudiantes y facultad (Spring 1973)
+
+```{r}
+Nombre <- c("American International", "Bethany Nazarene", "Carlow",
+          "David Lipscomb", "Florida International University", "Heidelberg",
+          "Lake Erie", "Marie Hardin Baylor", "Mt. Angel", "Newberry",
+          "Pacific Lutheran University", "St. Ambrose", "Smith",
+          "Texas Women's University", "West Liberty State", "Wofford")
+Estudiantes <- c(2546, 1355, 1019, 1858, 4500, 1141, 784, 1063, 267, 753, 
+                 3164, 1189, 2755, 5602, 2697, 988)
+Facultad <- c(129, 75, 87, 99, 300, 109, 77, 64, 40, 61, 190, 90, 240, 300, 
+              170, 73)
+datos1 <- data.frame(Nombre, Estudiantes, Facultad)
+kable(datos1, longtable = T, booktabs = T, align = "c",
+      caption = "Datos sobre número de estudiantes")
+```
+
+\subsection{Literal (a)}
+
+Dibuje un diagrama que muestre dichos puntos usando "facultad" como el eje x.
+
+\subsection{Literal (b)}
+
+Estime la linea de regresión usando el método de mínimos cuadrados.
+
+\subsection{Literal (c)}
+
+Grafique la línea de regresión por mínimos cuadrados del diagrama del literal
+(a).
+
+\subsection{Literal (d)}
+
+Pruebe la hipótesis de que un incremento de un miembro de la facultad es
+acompañado por un incremento promedio de 15 estudiantes.
+
+\subsection{Literal (e)}
+
+Encuentre un intervalo de confianza para la pendiente.
+
+\section{Ejercicio 5.6.3)}
+
+En una prueba para determinar la probabilidad de explosión de una mina
+terrestre, dada una cierta fuerza de estímulo, se probaron 17 minas 
+terrestres dándole a cada una una fuerza diferente de estímulo de choque 
+y observando si la mina explotó o no. Ocho minas explotaron y nueve no. La
+fuerza respectiva del estímulo de choque para cada uno se da de la siguiente
+manera.
+
+```{r}
+Explota <- "10.7 13.9 15.8 17.0 18.1 19.9 20.7 21.6"
+NoExplota <- "4.0 4.4 4.7 5.1 9.3 11.2 13.7 15.0 19.7"
+datos2 <- t(data.frame(Explota, NoExplota)) 
+rownames(datos2) <- c("Explota", "No Explota")
+kable(datos2, longtable = T, booktabs = T, align = "c",
+      caption = "Datos sobre minas terrestres")
+```
+
+Utilice la regresión monótona para estimar la probabilidad de que una mina
+terrestre explote dado un estímulo de impacto de fuerza 20. 
+(Pista: Sea Y = 0 si la mina no explotó, y sea Y = 1 si la mina explotó).
+ 
+\section{Ejercicio 5.7.2)}
+
+Un tendero desea ver si el número medio de artículos comprados en cada venta
+podría considerarse 10, por lo que observa a 12 clientes en el mostrador de
+caja.
+
+```{r}
+Cliente <- 1:12
+NumArt <- c(22, 9, 4, 5, 1, 16, 15, 26, 47, 8, 31, 7)
+datos3 <- data.frame(Cliente, NumArt)
+kable(datos3, longtable = T, booktabs = T, align = "c",
+      caption = "Datos sobre el número de articulos comprados")
+```
+
+¿Se puede utilizar la prueba de Wilcoxon? ¿Qué supuestos del modelo se violan
+en este problema?
+
+\section{Ejercicio 5.8.1)}
+
+Se realizó una encuesta en los siete hospitales de una ciudad en particular
+para obtener el número de bebés nacidos durante un período de 12 meses. 
+Este período de tiempo se dividió en las cuatro estaciones para probar la
+hipótesis de que la tasa de natalidad es constante durante las cuatro
+estaciones. Los resultados de la encuesta son los siguientes:
+
+```{r}
+Hospital <- LETTERS[1:7]
+Invierno <- c(92, 9, 98, 19, 21, 58, 42)
+Primavera <- c(112, 11, 109, 26, 22, 71, 49)
+Verano <- c(94, 10, 92, 19, 23, 51, 44)
+Otono <- c(77, 12, 81, 18, 24, 62, 41)
+datos4 <- data.frame(Hospital, Invierno, Primavera, Verano, Otono)
+kable(datos4, longtable = T, booktabs = T, align = "c",
+      caption = "Datos sobre el número de nacidos",
+      col.names = c("Hospital", "Invierno", "Primavera", "Verano", "Otoño"))
+```
+
+\subsection{Literal (a)}
+
+Analice los datos usando el test de Friedman
+
+\subsection{Literal (b)}
+
+Analice los datos usando el test de Quade
+
+\subsection{Literal (c)}
+
+¿Puede explicar la amplia discrepancia en los resultados de las dos pruebas?
