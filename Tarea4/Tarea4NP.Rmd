@@ -20,7 +20,7 @@ language: "es"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = F, fig.pos = "center")
+knitr::opts_chunk$set(echo = F, fig.align = "center")
 library(kableExtra)
 library(knitr)
 library(tidyverse)
@@ -43,7 +43,7 @@ library(latex2exp)
 Una muestra aleatoria de colegios y universidades americanas resulta en los
 siguientes números de estudiantes y facultad (Spring 1973)
 
-```{r}
+```{r datos1}
 Nombre <- c("American International", "Bethany Nazarene", "Carlow",
           "David Lipscomb", "Florida International University", "Heidelberg",
           "Lake Erie", "Marie Hardin Baylor", "Mt. Angel", "Newberry",
@@ -58,27 +58,210 @@ kable(datos1, longtable = T, booktabs = T, align = "c",
       caption = "Datos sobre número de estudiantes")
 ```
 
+\newpage
 \subsection{Literal (a)}
 
 Dibuje un diagrama que muestre dichos puntos usando "facultad" como el eje x.
 
+**Solución**
+
+Sean
+
+* X: Número de estudiantes en la facultad
+* Y: Número de estudiantes en el colegio
+
+```{r scatterplot1}
+ggplot(datos1, aes(Facultad, Estudiantes)) + 
+  geom_point() +
+  labs(title = "Diagrama de dispersión Estudiantes vs Facultad") +
+  theme_bw() + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+Del anterior gráfico se puede apreciar una clara correlación positiva entre 
+el número de estudiantes del colegio y facultad, además dicha correlación
+parece ser lineal por lo que una regresión lineal simple parece ser adecuada.
+
+\newpage
 \subsection{Literal (b)}
 
 Estime la linea de regresión usando el método de mínimos cuadrados.
 
+**Solución**
+
+Se quiere estimar la recta de regresión 
+
+$$
+y = \alpha + \beta x + \varepsilon
+$$
+para este propósito se usa el método de mínimos cuadrados para estimar los
+parámetros $\alpha$ y $\beta$ usando las siguientes expresiones
+
+$$
+\begin{aligned}
+\hat{\beta} &= b = \frac{\sum_{i=1}^n X_i Y_i - n \bar{X} \bar{Y}}{\sum_{i=1}^n X_i^2 - n \bar{X}^2} \\
+\hat{\alpha} &= a = \bar{Y} - b \bar{X}
+\end{aligned}
+$$
+
+A continuación se realizan los cálculos necesarios para este fin
+
+```{r calculos_manuales}
+num1 <- sum(Facultad*Estudiantes)
+num2 <- length(Facultad) * mean(Facultad) * mean(Estudiantes)
+den1 <- sum(Facultad^2)
+den2 <- length(Facultad) * mean(Facultad)^2
+b <- (num1 - num2)/(den1 - den2)
+a <- mean(Estudiantes) - b*mean(Facultad)
+```
+
+
+$$
+\begin{aligned}
+\bar{X} = 131.5 &\hspace{.2in} \bar{Y} = 1980.062\\
+\sum_{i=1}^n X_i Y_i &= 5942620 \\
+\sum_{i=1}^n X_i^2 &= 382892  \\
+n \bar{X} \bar{Y} &= 4166052 \\
+n \bar{X}^2 &= 276676
+\end{aligned}
+$$
+Luego
+
+$$
+\begin{aligned}
+b &= \frac{5942620 - 4166052}{382892 - 276676} = 16.726 \\
+a &= 1980.062 - 16.726 \times 131.5 = -219.4061
+\end{aligned}
+$$
+por lo tanto, la recta de regresión estimada tiene ecuación
+
+$$
+\hat{y} = -219.4061 + 16.726x
+$$
+\newpage
 \subsection{Literal (c)}
 
 Grafique la línea de regresión por mínimos cuadrados del diagrama del literal
 (a).
+
+**Solución**
+
+```{r regline}
+ggplot(datos1, aes(Facultad, Estudiantes)) + 
+  geom_point() + 
+  labs(title = "Recta de regresión ajustada a los puntos") +
+  geom_smooth(formula = y ~ x, method = lm, se = F) +
+  theme_bw() + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
 
 \subsection{Literal (d)}
 
 Pruebe la hipótesis de que un incremento de un miembro de la facultad es
 acompañado por un incremento promedio de 15 estudiantes.
 
+**Solución**
+
+La hipótesis de interes en este caso es
+
+$$
+\begin{cases}
+H_0: \beta = 15 \\
+H_1: \beta \neq 15
+\end{cases}
+$$
+para probar esta hipótesis, se usa una ligera modificación del test de
+correlación de Spearman. Sea $u_i =  y_i - 15x_i$, se usan los pares 
+$(x_i, y_i)$ en una prueba de correlación de Spearman para probar la 
+hipótesis de interés. A continuación se presentan los pares rankeados:
+
+```{r rangos_ej1}
+U <- Estudiantes - 15*Facultad
+rank_U <- rank(U)
+rank_Fac <- rank(Facultad)
+rangos_ej1 <- data.frame(Facultad, rank_Fac, U, rank_U)
+kable(rangos_ej1, longtable = T, booktabs = T, align = "c",
+      caption = "Pares $(x_i, u_i)$ rankeados",
+      col.names = c("X", "Rango", "U", "Rango"))
+```
+
+puesto que existe un empate, el $\rho$ de Spearman se calcula como sigue
+
+$$
+\rho = \frac{\sum_{i=1}^n R(x_i)R(u_i) - n\left(\frac{n+1}{2}\right)^2}{\sqrt{\sum_{i=1}^n R^2(x_i) - n\left(\frac{n+1}{2}\right)^2} \sqrt{\sum_{i=1}^n R^2(u_i) - n\left(\frac{n+1}{2}\right)^2}}
+$$
+```{r rho_spearman}
+n <- length(Facultad)
+num_rho <- (sum(rank_Fac*rank_U) - n*(n + 1)^2/4)
+den_rho <- sqrt(sum(rank_Fac^2) - n*(n + 1)^2/4) * 
+  sqrt(sum(rank_U^2) - n*(n + 1)^2/4)
+rho <- num_rho/den_rho
+pvalor <- 2*pnorm(rho*sqrt(n - 1), lower.tail = F)
+```
+
+
+Luego de realizar los cálculos se obtiene $\rho = `r round(rho, 4)`$ y se
+calcula el valor-p como 
+$2 \mathbb{P}(Z \geq |\rho| \sqrt{n - 1}) = 2 \mathbb{P}(Z \geq |0.3076| \sqrt{15}) = `r round(pvalor, 4)` > 0.1$ por lo que no se rechaza 
+$H_0$ y se concluye que no hay evidencia muestral suficiente que sugiera
+$\beta \neq 15$ por lo que se podría asumir $\beta = 15$.
+
 \subsection{Literal (e)}
 
 Encuentre un intervalo de confianza para la pendiente.
+
+**Solución**
+
+Para esta situación se usará un nivel de confianza del 95\%. Para construir el intervalo de confianza se toman los 16 puntos y se calculan todas las pendientes posibles como 
+
+$$
+S_{ij} = \frac{Y_j - Y_i}{X_j - X_i}
+$$
+
+siempre que $i < j$ y $X_j \neq X_i$. Una vez halladas las $N$ pendientes 
+que sean posibles de calcular, se calcula el cuantil $W_{0.975}$ de la tabla
+$A11$ de Conover y se definen $r$ y $s$ como sigue
+
+$$
+\begin{aligned}
+r &= \frac{1}{2}(N-W_{0.975}) \\
+s &= N + 1 - r
+\end{aligned}
+$$
+finalmente, se ordenan las $N$ pendientes posibles como 
+$M = \{S^{(1)} , \cdots, S^{(N)}\}$ y el intervalo resultante es 
+$IC_{95\%} = \left(S^{(r)}, S^{(s)}\right)$.
+
+```{r pendientes}
+#todas las pendientes posibles
+puntos <- cbind(Facultad, Estudiantes)
+M <- c()
+for(i in 1:dim(puntos)[1]){
+  for(j in (i + 1):dim(puntos)[1]){
+    if(i < 16){
+      m <- (puntos[j, 2] - puntos[i, 2])/(puntos[j, 1] - puntos[i, 1])
+      M <- as.numeric(append(M, m))
+    }
+  }
+}
+M <- sort(M[M != Inf])
+N <- length(M)
+W <- 44 
+
+#Intervalo de confianza
+r <- floor((1/2)*(N - W))
+s <- ceiling(N + 1 - r)
+IC <- M[c(r, s)] %>% round(4)
+```
+
+Se puede verificar que luego de realizar los respectivos calculos, se tienen
+$N = 119$ pendientes posibles, además $W_{0.975} = 44$ (tabla A11 de Conover),
+luego $r =\left\lfloor \frac{1}{2}(119-44) \right\rfloor = \left\lfloor \frac{75}{2} \right\rfloor = 37$ y 
+$s = \lceil 119 + 1 - 37 \rceil = 83$, por lo tanto un intervalo de confianza
+del 95\% para $\beta$ es $\left(S^{(37)},  S^{(83)}\right) = (`r IC`)$. 
+Note que $15 \in IC_{95\%}$ lo cual concuerda con la prueba de hipótesis 
+hecha en (d) a un nivel de significancia del 5\%.
 
 \section{Ejercicio 5.6.3)}
 
