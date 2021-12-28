@@ -27,6 +27,7 @@ library(tidyverse)
 library(gtools)
 library(agricolae)
 library(latex2exp)
+library(forecast)
 ```
 
 \input{PortadaNP}
@@ -267,12 +268,13 @@ hecha en (d) a un nivel de significancia del 5\%.
 
 En una prueba para determinar la probabilidad de explosión de una mina
 terrestre, dada una cierta fuerza de estímulo, se probaron 17 minas 
-terrestres dándole a cada una una fuerza diferente de estímulo de choque 
+terrestres dándole a cada una fuerza diferente de estímulo de choque 
 y observando si la mina explotó o no. Ocho minas explotaron y nueve no. La
 fuerza respectiva del estímulo de choque para cada uno se da de la siguiente
 manera.
 
 ```{r}
+rm(list = ls())
 Explota <- "10.7 13.9 15.8 17.0 18.1 19.9 20.7 21.6"
 NoExplota <- "4.0 4.4 4.7 5.1 9.3 11.2 13.7 15.0 19.7"
 datos2 <- t(data.frame(Explota, NoExplota)) 
@@ -284,7 +286,8 @@ kable(datos2, longtable = T, booktabs = T, align = "c",
 Utilice la regresión monótona para estimar la probabilidad de que una mina
 terrestre explote dado un estímulo de impacto de fuerza 20. 
 (Pista: Sea Y = 0 si la mina no explotó, y sea Y = 1 si la mina explotó).
- 
+
+\newpage
 \section{Ejercicio 5.7.2)}
 
 Un tendero desea ver si el número medio de artículos comprados en cada venta
@@ -292,8 +295,11 @@ podría considerarse 10, por lo que observa a 12 clientes en el mostrador de
 caja.
 
 ```{r}
+rm(list = ls())
 Cliente <- 1:12
 NumArt <- c(22, 9, 4, 5, 1, 16, 15, 26, 47, 8, 31, 7)
+Media <- rep(10, 12)
+Di <- NumArt -  Media
 datos3 <- data.frame(Cliente, NumArt)
 kable(datos3, longtable = T, booktabs = T, align = "c",
       caption = "Datos sobre el número de articulos comprados")
@@ -301,6 +307,98 @@ kable(datos3, longtable = T, booktabs = T, align = "c",
 
 ¿Se puede utilizar la prueba de Wilcoxon? ¿Qué supuestos del modelo se violan
 en este problema?
+
+**Solución**
+
+Uno de los supuestos de la prueba de rangos signados de Wilcoxon es que 
+la distribución de probabilidad de las diferencias $D_i$ sea simétrica. 
+A continuación se gráfica la densidad empírica de las diferencias $D_i$
+
+```{r densidad_ej3}
+ggplot(mapping = aes(Di)) +
+  geom_density() +
+  labs(y = "Densidad", x = TeX("$D_i$"), title = "Densidad empírica") +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+claramente este supuesto no se cumple pues se aprecia clara asimetría 
+positiva en la densidad empírica de las diferencias por lo que no es
+adecuado usar este test en la situación presentada.
+
+Suponiendo que los clientes llegaron a la tienda según el orden visto en 
+el cuadro 4, se usa la función de autocorrelación y su respectivo 
+correlograma para ver si existe dependencia entre las $D_i$
+
+```{r acf_di}
+ggAcf(Di) + 
+  labs(x = "Rezago", title = TeX("Correlograma de las $D_i$")) +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+Puesto que todas las barras se encuentran dentro de lo límites de confianza,
+no hay evidencia que sugiera dependencia temporal entre las $D_i$.
+
+**Nota:** Se prefiere hacer análisis gráficos debido a las pocas 
+observaciones presentes puesto que las pruebas formales podrían carecer de
+potencia.
+
+A continuación se realiza el test de rangos signados de Wilcoxon como 
+simple **ilustración del proceso a realizar**, sin embargo realizar dicho 
+test no es adecuado en esta situación particular.
+
+Las hipótesis de interés en este caso serían:
+
+$$
+\begin{cases}
+H_0: \mathbb{E}[D] = 0 \\
+H_1: \mathbb{E}[D] \neq 0
+\end{cases}
+$$
+
+En la siguiente tabla se presentan los rangos de las diferencias $D_i$
+
+```{r rangos_diferencias_ej3}
+abs_Di <- abs(Di)
+rangos_abs <- rank(abs_Di)
+diff <- data.frame(Di, R_abs_di = rangos_abs) %>%
+  mutate(Ri = if_else(Di > 0, R_abs_di, -R_abs_di))
+
+kable(diff, longtable = T, booktabs = T, align = "c",
+      caption = "Rangos signados a las diferencias $D_i$",
+      col.names = c("$D_i$", "$R|D_i|$", "$R_i$"),
+      escape = F)
+```
+
+Dada la existencia de empates, se usa como estadístico de prueba
+
+$$
+T = \frac{\sum_{i = 1}^n R_i}{\sqrt{\sum_{i = 1}^n R_i^2}} \sim N(0, 1)
+$$
+
+El valor-p se calcula como
+
+$$
+2 \ \text{min} \left\{\mathbb{P}\left(Z \leq \frac{\sum_{i = 1}^n R_i + 1}{\sqrt{\sum_{i = 1}^n R_i^2}}\right), \mathbb{P}\left(Z \geq \frac{\sum_{i = 1}^n R_i - 1}{\sqrt{\sum_{i = 1}^n R_i^2}}\right)\right\}
+$$
+```{r pvalor_ej3}
+aux_num3 <- sum(diff$Ri)
+aux_den3 <- sum(diff$Ri^2)
+lower <- (aux_num3 + 1)/sqrt(aux_den3)
+upper <- (aux_num3 - 1)/sqrt(aux_den3)
+pvalor <- 2*min(pnorm(lower), pnorm(upper, lower.tail = F))
+```
+
+
+Se puede verificar que $\sum_{i=1}^n R_i = 28, \ \sum_{i=1}^n R_i^2 = 649$.
+Por lo tanto, Valor-p = 
+$2 \ \text{min} \left\{\mathbb{P}\left(Z \leq \frac{29}{\sqrt{649}}\right),\left(Z \leq \frac{27}{\sqrt{649}}\right) \right\} = `r round(pvalor, 4)` > 0.1$ 
+por lo tanto no se rechaza $H_0$ y se concluiría que no hay evidencia 
+muestral suficiente que sugiera que la media de articulos comprados en 
+la tienda sea diferente de 10, sin embargo se resalta nuevamente que este 
+test no es adecuado en la situación dada porque la distribución de los $D_i$
+no es simétrica.
 
 \section{Ejercicio 5.8.1)}
 
