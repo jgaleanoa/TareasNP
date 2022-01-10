@@ -81,7 +81,7 @@ ggplot(datos1, aes(Facultad, Estudiantes)) +
 
 Del anterior gráfico se puede apreciar una clara correlación positiva entre 
 el número de estudiantes del colegio y facultad, además dicha correlación
-parece ser lineal por lo que una regresión lineal simple parece ser adecuada.
+parece ser lineal por lo que una regresión lineal simple podría ser adecuada.
 
 \newpage
 \subsection{Literal (b)}
@@ -174,7 +174,7 @@ H_1: \beta \neq 15
 $$
 para probar esta hipótesis, se usa una ligera modificación del test de
 correlación de Spearman. Sea $u_i =  y_i - 15x_i$, se usan los pares 
-$(x_i, y_i)$ en una prueba de correlación de Spearman para probar la 
+$(x_i, u_i)$ en una prueba de correlación de Spearman para probar la 
 hipótesis de interés. A continuación se presentan los pares rankeados:
 
 ```{r rangos_ej1}
@@ -204,8 +204,10 @@ pvalor <- 2*pnorm(rho*sqrt(n - 1), lower.tail = F)
 
 Luego de realizar los cálculos se obtiene $\rho = `r round(rho, 4)`$ y se
 calcula el valor-p como 
-$2 \mathbb{P}(Z \geq |\rho| \sqrt{n - 1}) = 2 \mathbb{P}(Z \geq |0.3076| \sqrt{15}) = `r round(pvalor, 4)` > 0.1$ por lo que no se rechaza 
-$H_0$ y se concluye que no hay evidencia muestral suficiente que sugiera
+$2 \mathbb{P}(Z \geq |\rho| \sqrt{n - 1}) = 2 \mathbb{P}(Z \geq |0.3076| \sqrt{15}) = `r round(pvalor, 4)`$ por lo que no se rechaza 
+$H_0$ a un nivel de significancia de 0.1 el cual suele ser, generalmente, 
+valor de $\alpha$ más grande admisible y se concluye que no hay evidencia
+muestral suficiente que sugiera
 $\beta \neq 15$ por lo que se podría asumir $\beta = 15$.
 
 \subsection{Literal (e)}
@@ -287,6 +289,8 @@ Utilice la regresión monótona para estimar la probabilidad de que una mina
 terrestre explote dado un estímulo de impacto de fuerza 20. 
 (Pista: Sea Y = 0 si la mina no explotó, y sea Y = 1 si la mina explotó).
 
+**Solución**
+
 ```{r}
 n <- 17
 est1 <- c(10.7, 13.9, 15.8, 17.0, 18.1, 19.9, 20.7, 21.6)
@@ -311,7 +315,7 @@ a2 <- (1-b2)*(n+1)/2
 Ry_est <- a2+b2*Rx
 y_est <- rep(0,17)
 
-y_est <- (Ry_est-Ry)/(13.5-5)
+y_est <- (Ry_est - 5)/(13.5 - 5)
 y_est[8] <- 1
 y_est[9] <- 0
 
@@ -323,9 +327,13 @@ y_est_x0 <- (a2+b2*Rx0-5)/(13.5-5)
 tabla_reg_est <- round(cbind(X,Rx,Y,Ry,Ry_est,y_est,Rx_est,x_est),2)
 ```
 
-Utilizando minimos cuadrados ordinarios se estima la recta de regresión con los rangos de los datos:
+Utilizando minimos cuadrados ordinarios se estima la recta de regresión con
+los rangos de los datos:
 
 $$\hat{R}(y_0)=a_2+b_2R(x_0)$$
+
+\newpage
+
 ```{r}
 kable(tabla_reg_est[,c(1:4)],
       longtable = T, booktabs = T, align = "c",
@@ -338,20 +346,26 @@ kable(tabla_reg_est[,c(1:4)],
 El resultado final es:
 
 $$\hat{R}(y_0)=3.9375+0.5625R(x_0)$$
+
 A partir de la ecuación anterior se estiman los rangos y las probabilidades:
 
 ```{r}
-
-
-kable(tabla_reg_est, longtable = T, booktabs = T, align = "c",
+kable(head(tabla_reg_est, 10), longtable = T, booktabs = T, align = "c",
       caption = "Datos y rangos estimados",
       col.names = c("$x_i$","$R(x_i)$","$y_i$","$R(y_i)$",
                     "$\\hat{R}(y_i)$","$\\hat{y}_i$",
                     "$\\hat{R}(x_i)$","$\\hat{x}_i$"),
       escape = F)
+
+kable(tail(tabla_reg_est, 7), longtable = T, booktabs = T, align = "c",
+      col.names = c("$x_i$","$R(x_i)$","$y_i$","$R(y_i)$",
+                    "$\\hat{R}(y_i)$","$\\hat{y}_i$",
+                    "$\\hat{R}(x_i)$","$\\hat{x}_i$"),
+      escape = F, row.names = F)
 ```
 
-Finalmente para estimación de la probabilidad de que una mina terrestre explote dado un estímulo de impacto de fuerza 20 es:
+Finalmente para estimación de la probabilidad de que una mina terrestre
+explote dado un estímulo de impacto de fuerza 20 es:
 
 $$x_0=20 \longrightarrow 19.9<x_0<20.7$$
 $$R(20)=R(19.9)+\frac{20-19.9}{20.7-19.9}(R(20.7)-R(19.9))$$
@@ -363,7 +377,8 @@ $$5<\hat{R}(y_0)<13.5$$
 
 $$\hat{E}[Y|X=20]=0+\frac{12.36889-5}{13.5-5}(1-0)$$
 $$\hat{E}[Y|X=20]=0.8669277$$
-La probabilidad de que una mina terrestre explote dado un estímulo de impacto de fuerza 20 es del $86.692\%$
+La probabilidad de que una mina terrestre explote dado un estímulo de impacto
+de fuerza 20 es del $86.692\%$
 
 \newpage
 \section{Ejercicio 5.7.2)}
@@ -405,7 +420,7 @@ positiva en la densidad empírica de las diferencias por lo que no es
 adecuado usar este test en la situación presentada.
 
 Suponiendo que los clientes llegaron a la tienda según el orden visto en 
-el cuadro 4, se usa la función de autocorrelación y su respectivo 
+el cuadro 7, se usa la función de autocorrelación y su respectivo 
 correlograma para ver si existe dependencia entre las $D_i$
 
 ```{r acf_di}
@@ -436,6 +451,8 @@ H_1: \mathbb{E}[D] \neq 0
 $$
 
 En la siguiente tabla se presentan los rangos de las diferencias $D_i$
+
+\newpage
 
 ```{r rangos_diferencias_ej3}
 abs_Di <- abs(Di)
@@ -478,6 +495,7 @@ la tienda sea diferente de 10, sin embargo se resalta nuevamente que este
 test no es adecuado en la situación dada porque la distribución de los $D_i$
 no es simétrica.
 
+\newpage
 \section{Ejercicio 5.8.1)}
 
 Se realizó una encuesta en los siete hospitales de una ciudad en particular
@@ -502,10 +520,9 @@ Las hipótesis de interés a contrastar son:
 
 $$
 \begin{cases}
-H_0: \text{Los tratamientos tiene efectos iguales} \\
-H_1: \text{Al menos un tratamiento tiende a tomar}\\
-\text{    valores observados más grandes que al menos}\\
-\text{    unos de los otros tratamientos}
+H_0: \text{La tasa de natalidad en las 4 estaciones es constante} \\
+H_1: \text{Al menos una estación tiene una tasa de natalidad observada }\\
+\text{    más grande que al menos una de las otras estaciones}
 \end{cases}
 $$
 
@@ -570,7 +587,10 @@ T2 <- (T1*(b-1))/(b*(k-1)-T1) # k1=k-1=3 ; k2=(b-1)(k-1)=6*3=18
 #pf(q=T2,3,18,lower.tail = F)
 ```
  
+**Solución**
+
 Los rangos asignados dentro de cada bloque son: 
+
 ```{r}
 kable(rangos_bloques, longtable = T, booktabs = T, align = "c",
       caption = "Rangos asignados dentro de cada bloque",
@@ -586,18 +606,26 @@ kable(matrix(Rjs,ncol = 4,nrow = 1), longtable = T, booktabs = T, align = "c",
 ```
 Como existen empates utilizamos el estadistico $T1$:
 
-$$T1=\frac{(k-1)\sum_{j=1}^b(R_j-\frac{b(k+1)}{2})^2}{A1-C1}$$
-$$A1=\sum_{i=1}^b\sum_{j=1}^kR^2(X_{ij})=209.5$$
-$$C1=\frac{bk(k+1)^2}{4}=175$$
-El $T1$ calculado final es:
-$$T1=6.913043$$
-El valor $p$ calculado utilizando $T1$  es: $0.07472163$
+$$T_1=\frac{(k-1)\sum_{j=1}^b(R_j-\frac{b(k+1)}{2})^2}{A_1-C_1} \stackrel{\text{approx}}{\sim} \chi_{(k-1)}^2$$
 
-El estadistico de prueba $T2$ es mucho mejor que el $T1$, por lo tanto hacemos uso de el para sacar las conclusioneas:
+donde $k = 4$ y $b=7$
 
-$$T2=\frac{(b-1)T1}{b(k-1)-T1}=2.944444$$
+$$A_1=\sum_{i=1}^b\sum_{j=1}^kR^2(X_{ij})=209.5$$
+$$C_1=\frac{bk(k+1)^2}{4}=175$$
+El $T_1$ calculado final es:
+$$T_1=6.913043$$
+El valor $p$ calculado utilizando $T_1$  es: $0.07472163$
 
-El valor $p$ calculado utilizando $T2$  es: $0.06084675$
+El estadístico de prueba $T_2$ es mucho mejor que el $T_1$, por lo tanto se hace uso de el para sacar las conclusiones:
+
+$$
+\begin{aligned}
+T_2 &=\frac{(b-1)T1}{b(k-1)-T1}=2.944444 \\
+T_2 &\stackrel{\text{approx}}{\sim} f_{(k-1), (k-1)(b-1)}
+\end{aligned}
+$$
+  
+El valor $p$ calculado utilizando $T_2$  es: $0.06084675$
 
 A un nivel $\alpha=0.05$ no se rechaza la hipotesis nula, es decir, no hay evidencia muestral para suguerir que la tasa de natalidad no sea constante en las cuatro estaciones.
 
@@ -605,7 +633,82 @@ A un nivel $\alpha=0.05$ no se rechaza la hipotesis nula, es decir, no hay evide
 
 Analice los datos usando el test de Quade
 
+**Solución**
+
+A continuación se presentan los resultados obtenidos al usar el test de Quade,
+para esto se usa la función `quade.test()` de la librería `stats` de R.
+
 ```{r}
+y <- matrix(c( 92, 112, 94, 77,
+               9, 11, 10, 12,
+               98, 109, 92, 81,
+               19, 26, 19, 18,
+               21, 22, 23, 24,
+               58, 71, 51, 62,
+               42, 49, 44, 41),
+nrow = 7, byrow = TRUE,
+dimnames =
+list(Hospitales = as.character(1:7),
+Estaciones = LETTERS[1:4]))
+
+# quade.test(y)
+quade_table <- data.frame(F = 4.4309, numdf = 3, dendf = 18, pvalor = 0.01685)
+kable(quade_table, longtable = T, booktabs = T, align = "c",
+      caption = "Resultados del test de Quade",
+      col.names = c("Estadístico", "G.l numerador", "G.l denominador",
+                    "Valor p"))
+```
+
+A un nivel $\alpha=0.05$ se rechaza la hipotesis nula, es decir, hay 
+evidencia muestral para suguerir que la tasa de natalidad no es constante en
+las cuatro estaciones.
+
+\subsection{Literal (c)}
+
+¿Puede explicar la amplia discrepancia en los resultados de las dos pruebas?
+
+La discrepancia entre los resultados de las 2 pruebas recae en los
+estadísticos utilizados en las mismas, ya que ambas le dan diferentes pesos a
+los bloques en los que se divide el problema, por lo anterior el test de 
+Quade asigna de mejor manera dichos pesos por lo cual es mejor para abordar 
+el problema. 
+
+\section{Anexos}
+
+\subsection{Intervalo de confianza para la pendiente (Ejercicio 5.5.2, 
+literal (e)) }
+
+```{r echo=T, message=F}
+library(magrittr)
+#Datos
+Estudiantes <- c(2546, 1355, 1019, 1858, 4500, 1141, 784, 1063, 267, 753, 
+                 3164, 1189, 2755, 5602, 2697, 988)
+Facultad <- c(129, 75, 87, 99, 300, 109, 77, 64, 40, 61, 190, 90, 240, 300, 
+              170, 73)
+#Todas las pendientes posibles
+puntos <- cbind(Facultad, Estudiantes)
+M <- c()
+for(i in 1:dim(puntos)[1]){
+  for(j in (i + 1):dim(puntos)[1]){
+    if(i < 16){
+      m <- (puntos[j, 2] - puntos[i, 2])/(puntos[j, 1] - puntos[i, 1])
+      M <- as.numeric(append(M, m))
+    }
+  }
+}
+M <- sort(M[M != Inf])
+N <- length(M)
+W <- 44 #Valor de la tabla A11 de Conover
+
+#Intervalo de confianza
+r <- floor((1/2)*(N - W))
+s <- ceiling(N + 1 - r)
+(IC <- M[c(r, s)] %>% round(4))
+```
+
+\subsection{Test de Quade (Ejercicio 5.8.1, literal (b))}
+
+```{r echo = T}
 y <- matrix(c( 92, 112, 94, 77,
                9, 11, 10, 12,
                98, 109, 92, 81,
@@ -621,10 +724,3 @@ Estaciones = LETTERS[1:4]))
 quade.test(y)
 ```
 
-A un nivel $\alpha=0.05$ se rechaza la hipotesis nula, es decir, hay evidencia muestral para suguerir que la tasa de natalidad no es constante en las cuatro estaciones.
-
-\subsection{Literal (c)}
-
-¿Puede explicar la amplia discrepancia en los resultados de las dos pruebas?
-
-La discrepancial entre los resultados de las 2 pruebas recae en los estadisticos utilizados en las mismas, ya que ambas le dan diferentes pesos a los bloques en los que se divide el problema, por lo anterior el test de Quade asigna de mejor manera dichos pesos por lo cual es mejor para abordar el problema. 
