@@ -1,0 +1,88 @@
+---
+header-includes:
+- \usepackage{longtable}
+- \usepackage[utf8]{inputenc}
+- \usepackage[spanish]{babel}\decimalpoint
+- \setlength{\parindent}{1.25cm}
+- \usepackage{amsmath}
+- \usepackage{xcolor}
+- \usepackage{cancel}
+- \usepackage{array}
+- \usepackage{float}
+- \usepackage{multirow}
+output:
+  pdf_document:
+    number_sections: true
+fontsize: 12pt
+papersize: letter
+geometry: margin = 1in
+language: "es"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, fig.align = "center")
+library(kableExtra)
+library(knitr)
+library(tidyverse)
+library(gtools)
+library(latex2exp)
+```
+
+\input{PortadaNP}
+\thispagestyle{empty}
+\tableofcontents
+
+\newpage
+
+\pagestyle{myheadings}
+\setcounter{page}{3}
+
+\section{Ejercicio 6.1.6)}
+
+Las emisiones de óxido nitroso del modelo de automóvil del año pasado se
+midieron en miles de automóviles y se encontró que son aproximadamente 
+normales con una media de 5.6 y una desviación estándar de 1.2. Doce de los
+modelos de automóviles de este año han sido probados con los resultados.
+
+```{r}
+datos1 <- matrix(c(4.8, 6.2, 6.0, 5.9, 6.6, 5.5, 5.8, 5.9, 6.3, 6.6, 6.2, 5.0),
+                 byrow = T, nrow = 1)
+kable(datos1, longtable = T, align = "c", booktabs = T,
+      caption = "Oxido nitroso de los autosmóviles actuales")
+```
+
+¿El modelo de este año parece tener la misma distribución que el modelo del 
+año pasado?
+
+\section{Ejercicio 6.2.6)}
+
+Veinte accidentes ocurrieron a lo largo de un tramo particular de la carretera
+interestatal en un mes. Las diecinueve distancias entre accidentes, en millas,
+son las siguientes.
+
+```{r warning=F}
+distancias <- c(0.3, 6.1, 4.3, 3.3, 1.9, 
+                4.8, 0.3, 1.2, 0.8, 10.3,
+                1.2, 0.1, 10.0, 1.6, 27.6,
+                12.0, 14.2, 19.7, 15.5)
+datos2 <- matrix(distancias, ncol = 5, byrow = T)
+datos2[4, 5] <- NA
+opts <- options(knitr.kable.NA = "")
+kable(datos2, longtable = T, booktabs = T,
+      caption = "Accidentes en la vía estatal particular")
+```
+
+¿Los accidentes parecen estar distribuidos al azar a lo largo de la carretera?
+
+\section{Ejercicio 6.3.1)}
+
+Pruebe el conjunto de hipótesis
+
+$$
+\begin{cases}
+H_0: F(x) \leq G(x) \\
+H_1: F(x) > G(x)
+\end{cases}
+$$
+donde las observaciones para $F(x)$ son 0.6, 0.8, 0.8, 1.2, 1.4 y las
+observaciones de $G(x)$ son 1.3, 1.3, 1.8, 2.4 y 2.9.
