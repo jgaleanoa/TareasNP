@@ -44,15 +44,99 @@ midieron en miles de automóviles y se encontró que son aproximadamente
 normales con una media de 5.6 y una desviación estándar de 1.2. Doce de los
 modelos de automóviles de este año han sido probados con los resultados.
 
-```{r}
-datos1 <- matrix(c(4.8, 6.2, 6.0, 5.9, 6.6, 5.5, 5.8, 5.9, 6.3, 6.6, 6.2, 5.0),
+```{r presentacion-problema}
+datos1 <- matrix(c(4.8, 6.2, 6.0, 5.9, 6.6, 5.5, 5.8, 5.9, 6.3, 6.6, 6.2,
+                   5.0),
                  byrow = T, nrow = 1)
 kable(datos1, longtable = T, align = "c", booktabs = T,
-      caption = "Oxido nitroso de los autosmóviles actuales")
+      caption = "Oxido nitroso de los automóviles actuales")
 ```
 
 ¿El modelo de este año parece tener la misma distribución que el modelo del 
 año pasado?
+
+**Solución**
+
+Sea $X:$ Cantidad de oxido nitroso producido por los autos de este año. 
+Puesto que interesa saber si la distribución del oxido de nitroso de los
+modelos actuales es igual a los del año anterior se plantea el siguiente 
+juego de hipótesis
+
+$$
+\begin{cases}
+H_0: X_i \sim N\left(5.6, \ 1.2^2\right) \\
+H_1: X_i \nsim N\left(5.6, \ 1.2^2\right)
+\end{cases}
+$$
+La función de distribución acumulada, $F^*(x)$ para este caso es
+
+$$
+F^*_{}(x) = \int_{-\infty}^x \frac{1}{\sqrt{2.88 \pi}} \exp\left[{\frac{\left(t-5.6\right)^2}{2.88}}\right] dt
+$$
+A continuación se presenta la función de distribución acumulada empírica,
+asociada a los datos muestrales
+
+$$
+S(x) =
+\begin{cases}
+0 \hspace{1in} x < 4.8 \\
+0.0833 \hspace{.2in} 4.8 \leq x < 5 \\
+0.1667 \hspace{.32in} 5 \leq x < 5.5 \\
+0.25 \hspace{.35in} 5.5 \leq x < 5.8 \\
+0.33 \hspace{.35in} 5.8 \leq x < 5.9 \\
+0.5 \hspace{.43in} 5.9 \leq x < 6 \\
+0.5833 \hspace{.32in} 6 \leq x < 6.2 \\
+0.75 \hspace{.35in} 6.2 \leq x < 6.3 \\
+0.8333 \hspace{.19in} 6.3 \leq x < 6.6 \\
+1 \hspace{1in} x \geq 6.6
+\end{cases}
+$$
+En la siguiente tabla se reúnen los valores de $S(x)$ y $F^*(x)$
+
+```{r dist-nula-empirica}
+Xi <- sort(c(4.8, 6.2, 6.0, 5.9, 6.6, 5.5, 5.8, 5.9, 6.3, 6.6, 6.2,
+                   5.0))
+sx_left <- c(0, 1:4, 6, 7, 9, 10)/12
+sx_right <- c(1:4, 6, 7, 9, 10, 12)/12
+fx <- pnorm(unique(Xi), 5.6, 1.2)
+diff_left <- abs(sx_left - fx)
+diff_right <- abs(sx_right - fx)
+
+dist_emp <- data.frame(xi = unique(Xi), sx_left, sx_right, fx, 
+                       diff_left, diff_right)
+kable(dist_emp, longtable = T, align = "c", escape = F, booktabs = T,
+      caption = "Distribución nula vs empírica", digits = 4,
+      col.names = c("$X_i$", "$S^{-}(x)$", "$S^{+}(x)$", "$F^*(x)$",
+                    "$|S^{-}(x) - F^*(x)|$", "$|S^{+}(x) - F^*(x)|$"))
+```
+
+```{r estadistico-prueba}
+n <- length(Xi)
+Ts <- max(dist_emp$diff_left, dist_emp$diff_right)
+j <- 0:(floor(n*(1 - Ts)))
+suma <- sum(choose(n, j)*((1 - Ts - j/n)^(n - j))*(Ts + j/n)^(j - 1))
+pvalor <- 2*Ts*suma
+```
+
+El estadístico de prueba para esta situación es 
+$T = \text{Sup}\left|F^*(x) - S(x)\right|$ la cual es la mayor distancia 
+entre los valores de la distribución nula vs la distribución empírica de los
+datos.
+
+El valor-p se calcula como $2 T_0 \sum_{j = 0}^{\lfloor n(1 - T_0) \rfloor} \binom{n}{j} \left(1 - T_0 - \frac{j}{n}\right)^{n-j} \left(t + \frac{j}{n}\right)^{j-1}$.
+
+Se puede verificar en el cuadro 2 que el valor del estadístico de prueba e
+s $T_0 = `r round(Ts, 4)`$, además 
+$\lfloor 12(1 - `r round(Ts, 4)`) \rfloor = 8$
+por lo que $\sum_{j = 0}^{8} \binom{12}{j} \left(1 - `r round(Ts, 4)` - \frac{j}{12}\right)^{12-j} \left(`r round(Ts, 4)` + \frac{j}{12}\right)^{j-1} = `r round(suma, 4)`$, 
+luego el valor-p es 
+$2 \times `r round(Ts,4)` \times `r round(suma, 4)` = `r round(pvalor, 4)`$.
+
+Como el valor-p > 0.1 el cual suele ser el máximo nivel de significancia
+tolerado, no se rechaza $H_0$ y se concluye que no hay evidencia muestral
+suficiente para sugerir que la distribución de oxidoso nitroso producido por
+los automóviles de este año haya cambiado respecto a la del año pasado, 
+por lo que se podría asumir $X \sim N\left(5.6, 1.2^2\right)$.
 
 \section{Ejercicio 6.2.6)}
 
@@ -61,6 +145,7 @@ interestatal en un mes. Las diecinueve distancias entre accidentes, en millas,
 son las siguientes.
 
 ```{r warning=F}
+rm(list = ls())
 distancias <- c(0.3, 6.1, 4.3, 3.3, 1.9, 
                 4.8, 0.3, 1.2, 0.8, 10.3,
                 1.2, 0.1, 10.0, 1.6, 27.6,
