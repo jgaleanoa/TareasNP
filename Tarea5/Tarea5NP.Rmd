@@ -125,8 +125,7 @@ datos.
 
 El valor-p se calcula como $2 T_0 \sum_{j = 0}^{\lfloor n(1 - T_0) \rfloor} \binom{n}{j} \left(1 - T_0 - \frac{j}{n}\right)^{n-j} \left(t + \frac{j}{n}\right)^{j-1}$.
 
-Se puede verificar en el cuadro 2 que el valor del estadístico de prueba e
-s $T_0 = `r round(Ts, 4)`$, además 
+Se puede verificar en el cuadro 2 que el valor del estadístico de prueba es $T_0 = `r round(Ts, 4)`$, además 
 $\lfloor 12(1 - `r round(Ts, 4)`) \rfloor = 8$
 por lo que $\sum_{j = 0}^{8} \binom{12}{j} \left(1 - `r round(Ts, 4)` - \frac{j}{12}\right)^{12-j} \left(`r round(Ts, 4)` + \frac{j}{12}\right)^{j-1} = `r round(suma, 4)`$, 
 luego el valor-p es 
@@ -182,7 +181,7 @@ Para probar dicha hipótesis se procede como sigue
 * Se calcula la media muestral de la muestra
 * Se definen las variables aleatorias $Z_i = \frac{Xi}{\bar{X}} \sim \text{Exp(1)}$
 * Se toma como estadístico de prueba $T_2 = \text{Sup}|F^*(z) - S(x)|$ con
-\newline $F^*(z) = \begin{cases} 1 - e^{z_i} \hspace{.1in} zi > 0\\ 0 \hspace{.1in} \text{e.o.c}\end{cases}$
+\newline $F^*(z) = \begin{cases} 1 - e^{-z_i} \hspace{.1in} zi > 0\\ 0 \hspace{.1in} \text{e.o.c}\end{cases}$
 
 A continuación se presentan los resultados obtenidos
 
@@ -259,20 +258,22 @@ kable(tabla, longtable = T, booktabs = T, digits = 4, escape=F,caption = "Difere
 
 $$T_1^+=sup[S_1(x)-S_2(x)]=0.8$$
 
-Como $n=m=20$ el cuantil $W_{1-\alpha}$ se alla en la tabla A19 de Conover.
+Como $n=m=20$ el cuantil $W_{1-\alpha}$ se halla en la tabla A19 de Conover.
 
 Así con $\alpha=0.05$ $W_{0.95}=\frac{3}{5}=0.6$.
 
 La region de rechazo queda tal que: 
-$$Rc\{T_1^+/T_1^+>\frac{3}{5}\}$$
+$$Rc = \left\{T_1^+/T_1^+>\frac{3}{5}\right\}$$
 Como $T_1^+=0.8 \in  Rc$ se rechaza $H_0$, es decir, no hay evidencia muestral para suguerir que $F(x) \leq G(x)$.
 ```{r}
 #choose(2*5,5+trunc(5*0.8))/choose(2*5,5)
 ```
-Además el $p_{valor}=0.03968254$ con el cual, a un nivel $\alpha=0.05$ se sigue rechazando $H_0$.
 
-En R los resultados son los siguientes:
-```{r , warning=FALSE}
+El valor de $c = \lfloor 0.8 \times 5\rfloor = 4$, además el $p_{valor} = \frac{\binom{2n}{n+c}}{\binom{2n}{n}} = \frac{\binom{10}{9}}{\binom{10}{5}} = 0.03968254$ con el cual, a un nivel $\alpha=0.05$ se sigue rechazando $H_0$.
+
+<!-- En R los resultados son los siguientes: -->
+
+```{r , warning=FALSE, eval=F}
 ks.test(x=x,y=y,alternative = "greater")
 ```
 
