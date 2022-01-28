@@ -542,12 +542,12 @@ Según la tabla A11 de conover:
 $$W_{0.025}=-0.4667 \text{ y } W_{0.975}=0.4667$$
 $$Rc=\{\tau/\tau<-0.4667 \vee \tau>0.4667\}$$
 ```{r}
-a <- sqrt(n*(n-1)*(2*n+5))
+a <- sqrt(n*(n-1))/(sqrt(2*(2*n+5)))
 #T_ <- nc-nd
-#pnorm((T_+1)*sqrt(18)/a)
-#pnorm((T_-1)*sqrt(18)/a,lower.tail = F)
+pnorm(3*(-0.5227273)*a)
+pnorm(3*(-0.5227273)*a,lower.tail = F)
 
-#2*pnorm((T_+1)*sqrt(18)/a)
+2*pnorm(3*(-0.5227273)*a)
 ```
 
 $$p_{valor}=0.03538396$$

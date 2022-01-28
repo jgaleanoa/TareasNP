@@ -230,3 +230,52 @@ H_1: F(x) > G(x)
 $$
 donde las observaciones para $F(x)$ son 0.6, 0.8, 0.8, 1.2, 1.4 y las
 observaciones de $G(x)$ son 1.3, 1.3, 1.8, 2.4 y 2.9.
+
+**Solución**
+
+```{r}
+x <- c(0.6, 0.8, 0.8, 1.2, 1.4)
+y <- c(1.3, 1.3, 1.8, 2.4)
+dat6.3.1 <- matrix(c("Xi",x,
+                     "Yi",y, 2.9),byrow=T,nrow=2)
+
+kable(dat6.3.1,longtable = T, booktabs = T)
+```
+
+Sea $S_1(x)$ la funcion de distribución empirica de la muestra de $F(x)$ y $S_2(y)$ la función de distribución empirica de la muestra de $G(x)$.
+
+El estadístico para probar la hipótesis es  $T_1^+=sup[S_1(x)-S_2(x)]$
+
+```{r}
+s1 <- ecdf(x)
+s2 <- ecdf(y)
+tabla <- matrix(c(0.6, 0.8, 0.8, 1.2,NA,NA,1.4,NA,
+                  NA,NA,NA,NA,1.3,1.3,1.8,2.4,
+                  s1(c(0.6, 0.8, 0.8, 1.2)),s1(1.2)-s2(1.3),s1(1.2)-s2(1.3),s1(1.4)-s2(1.8),s1(1.4)-s2(2.4)
+                  ),byrow = F,ncol=3)
+kable(tabla, longtable = T, booktabs = T, digits = 4, escape=F,caption = "Diferencia distribuciónes empíricas", align = "c",
+      col.names = c("$Xi$","$Yi$","$S_1(x)-S_2(x)$"))
+```
+
+$$T_1^+=sup[S_1(x)-S_2(x)]=0.8$$
+
+Como $n=m=20$ el cuantil $W_{1-\alpha}$ se alla en la tabla A19 de Conover.
+
+Así con $\alpha=0.05$ $W_{0.95}=\frac{3}{5}=0.6$.
+
+La region de rechazo queda tal que: 
+$$Rc\{T_1^+/T_1^+>\frac{3}{5}\}$$
+Como $T_1^+=0.8 \in  Rc$ se rechaza $H_0$, es decir, no hay evidencia muestral para suguerir que $F(x) \leq G(x)$.
+```{r}
+#choose(2*5,5+trunc(5*0.8))/choose(2*5,5)
+```
+Además el $p_{valor}=0.03968254$ con el cual, a un nivel $\alpha=0.05$ se sigue rechazando $H_0$.
+
+En R los resultados son los siguientes:
+```{r , warning=FALSE}
+ks.test(x=x,y=y,alternative = "greater")
+```
+
+
+
+
